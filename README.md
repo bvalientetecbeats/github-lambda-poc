@@ -1,3 +1,3 @@
-# github-to-lambda-demo
+# github-lambda-poc
 
-This repo contains the source code to automatically update an AWS Lambda Function code using CodeBuild (i.e., CI/CD of AWS Lambda Deployment).
+This repo contains the source code to automatically update an AWS Lambda Function code using CodeBuild.
