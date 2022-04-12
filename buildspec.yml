@@ -16,7 +16,8 @@ phases:
       - terraform init
   build:
     commands:
-      - if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
+      #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
+      - terraform apply
       - echo "Zipping deployment package..."
       - pwd
       - cd ../.build/
