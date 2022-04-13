@@ -5,7 +5,6 @@ provider "aws" {
 
 data "aws_iam_policy_document" "policy" {
   statement {
-    sid    = "lambda-policy-poc"
     effect = "Allow"
     principals {
       identifiers = ["lambda.amazonaws.com"]
