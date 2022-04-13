@@ -11,6 +11,7 @@ phases:
       python: 3.8
     on-failure: ABORT
     commands:
+      - echo "Getting started with AWS Lambda deployment..."
       - echo ${TF_VAR_lambda_function_name}
       - echo ${TF_VAR_region}
       - echo ${function_name}
@@ -33,6 +34,9 @@ phases:
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
+      - echo "Starting Terraform plan..."
+      - terraform plan
+      - echo "Starting Terraform apply..."
       - terraform apply
   post_build:
     on-failure: ABORT
