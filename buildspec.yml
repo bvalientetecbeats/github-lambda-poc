@@ -1,4 +1,8 @@
 version: 0.2
+env:
+  variables:
+    - name: lambda_artifact
+      value: 'lambda_artifact.zip'
 phases:
   install:
     runtime-versions:
@@ -21,21 +25,22 @@ phases:
     commands:
       - echo "Zipping deployment package..."
       - cd ../.build/
-      - zip Lambda_Artifact.zip lambda_function.py
+      - chmod 644 lambda_function.py
+      - zip ${lambda_artifact} lambda_function.py
       - ls && pwd
       - mkdir -p unzip
-      - unzip Lambda_Artifact.zip -d unzip
+      - unzip ${lambda_artifact} -d unzip
       - ls -l unzip
-      - echo "Deploying new Lambda function..."
-      #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
       - echo "Starting Terraform plan..."
       - terraform plan
-      - echo "Starting Terraform apply..."
-      - terraform apply -auto-approve
   post_build:
     on-failure: ABORT
     commands:
+      - echo "Deploying new Lambda function..."
+      #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
+      - echo "Starting Terraform apply..."
+      - terraform apply -auto-approve
       - echo "Updating Lambda function..."
-      - aws lambda update-function-code --function-name ${TF_VAR_lambda_function_name} --zip-file fileb://Lambda_Artifact.zip
+      - aws lambda update-function-code --function-name ${TF_VAR_lambda_function_name} --zip-file fileb://${lambda_artifact}
       - echo "Lambda updated successfully!"
