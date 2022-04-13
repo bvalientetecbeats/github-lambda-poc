@@ -3,6 +3,7 @@ phases:
   install:
     runtime-versions:
       python: 3.8
+    on-failure: ABORT
     commands:
       - echo "Installing dependencies..."
       - apt install unzip -y
@@ -11,20 +12,23 @@ phases:
       - unzip terraform_1.1.8_linux_amd64.zip
       - mv terraform /usr/local/bin/
   pre_build:
+    on-failure: ABORT
     commands:
       - cd ./terraform-code
       - terraform init
   build:
+    on-failure: ABORT
     commands:
       - echo "Zipping deployment package..."
       - cd ../.build/
-      - zip Lambda_$${CODEBUILD_BUILD_NUMBER}.zip lambda_function.py
+      - zip Lambda_${CODEBUILD_BUILD_NUMBER}.zip" lambda_function.py
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
       - terraform apply
   post_build:
+    on-failure: ABORT
     commands:
       - echo "Updating Lambda function..."
-      - aws lambda update-function-code --function-name $${TF_LAMBDA_FUNCTION_NAME} --zip-file fileb://Lambda_$${CODEBUILD_BUILD_NUMBER}.zip
+      - aws lambda update-function-code --function-name ${TF_LAMBDA_FUNCTION_NAME} --zip-file fileb://Lambda_${CODEBUILD_BUILD_NUMBER}.zip
       - echo "Lambda updated successfully!"
