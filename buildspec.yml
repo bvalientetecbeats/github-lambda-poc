@@ -21,8 +21,7 @@ phases:
       - zip Lambda_$CODEBUILD_BUILD_NUMBER.zip lambda_function.py
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
-      - pwd
-      - cd ../terraform/
+      - cd ../terraform-code/
       - terraform apply
   post_build:
     commands:
