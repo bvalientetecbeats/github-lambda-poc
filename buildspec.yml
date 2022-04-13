@@ -1,6 +1,7 @@
 version: 0.2
 env:
   variables:
+    TF_VAR_REGION: $TF_VAR_REGION
     TF_LAMBDA_FUNCTION_NAME: $TF_LAMBDA_FUNCTION_NAME
 phases:
   install:
