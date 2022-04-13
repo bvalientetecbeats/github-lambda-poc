@@ -1,7 +1,6 @@
 version: 0.2
 env:
   variables:
-    CODEBUILD_BUILD_NUMBER: $CODEBUILD_BUILD_NUMBER
     TF_LAMBDA_FUNCTION_NAME: $TF_LAMBDA_FUNCTION_NAME
 phases:
   install:
