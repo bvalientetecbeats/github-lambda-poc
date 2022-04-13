@@ -40,7 +40,3 @@ output "lambda_function_name" {
 output "lambda_handler" {
   value = var.lambda_handler
 }
-
-output "codebuild_build_number" {
-  value = var.CODEBUILD_BUILD_NUMBER
-}

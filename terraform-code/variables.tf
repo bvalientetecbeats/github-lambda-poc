@@ -18,7 +18,3 @@ variable "lambda_runtime" {
 variable "lambda_handler" {
   description = "The handler to use for the Lambda function"  
 }
-
-variable "CODEBUILD_BUILD_NUMBER" {
-  description = "The build number of the current build"
-}
