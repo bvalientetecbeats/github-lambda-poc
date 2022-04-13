@@ -23,6 +23,9 @@ phases:
       - cd ../.build/
       - zip Lambda_Artifact.zip lambda_function.py
       - ls && pwd
+      - mkdir -p unzip
+      - unzip Lambda_Artifact.zip -d unzip
+      - ls -l unzip
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
