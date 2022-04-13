@@ -13,6 +13,16 @@ variable "service_type" {
   default     = "#{codebuild.TF_VAR_SERVICE_TYPE}"
 }
 
+variable "runtime" {
+  description = "Lambda runtime"
+  default     = "#{codebuild.TF_VAR_LAMBDA_RUNTIME}"
+}
+
+variable "handler" {
+  description = "Lambda handler"
+  default     = "#{codebuild.TF_VAR_LAMBDA_HANDLER}"
+}
+
 variable "build_number" {
   description = "The build number"
   default     = "#{CODEBUILD_BUILD_NUMBER}"
