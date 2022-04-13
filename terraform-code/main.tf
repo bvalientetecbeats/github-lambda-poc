@@ -20,10 +20,16 @@ resource "aws_iam_role" "iam_for_lambda" {
   assume_role_policy = "${data.aws_iam_policy_document.policy.json}"
 }
 
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/build/"
+  output_path = "${path.module}/build/lambda_artifact.zip"
+}
+
 resource "aws_lambda_function" "lambda" {
   function_name = var.lambda_function_name
-  filename         = "./.build/Lambda_Artifact.zip"
-  source_code_hash = filebase64sha256("./.build/Lambda_Artifact.zip")
+  filename         = join("", data.archive_file.lambda_zip.*.output_path)
+  source_code_hash = join("", data.archive_file.lambda_zip.*.output_base64sha256)
   role    = aws_iam_role.iam_for_lambda.arn
   handler = var.lambda_handler
   runtime = var.lambda_runtime
