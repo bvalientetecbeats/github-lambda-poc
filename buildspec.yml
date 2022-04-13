@@ -29,7 +29,7 @@ phases:
       - echo "Starting Terraform plan..."
       - terraform plan
       - echo "Starting Terraform apply..."
-      - terraform apply
+      - terraform apply -auto-approve
   post_build:
     on-failure: ABORT
     commands:
