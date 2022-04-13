@@ -21,7 +21,7 @@ phases:
     commands:
       - echo "Zipping deployment package..."
       - cd ../.build/
-      - zip Lambda_${CODEBUILD_BUILD_NUMBER}.zip" lambda_function.py
+      - zip Lambda_${CODEBUILD_BUILD_NUMBER}.zip lambda_function.py
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
