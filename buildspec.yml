@@ -18,7 +18,7 @@ phases:
     commands:
       - echo "Zipping deployment package..."
       - cd ../.build/
-      - zip Lambda_$CODEBUILD_BUILD_NUMBER.zip lambda_function.py
+      - zip Lambda_$${CODEBUILD_BUILD_NUMBER}.zip lambda_function.py
       - echo "Deploying new Lambda function..."
       #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
       - cd ../terraform-code/
@@ -26,5 +26,5 @@ phases:
   post_build:
     commands:
       - echo "Updating Lambda function..."
-      - aws lambda update-function-code --function-name $TF_LAMBDA_FUNCTION_NAME --zip-file fileb://Lambda_$CODEBUILD_BUILD_NUMBER.zip
+      - aws lambda update-function-code --function-name $${TF_LAMBDA_FUNCTION_NAME} --zip-file fileb://Lambda_$${CODEBUILD_BUILD_NUMBER}.zip
       - echo "Lambda updated successfully!"
