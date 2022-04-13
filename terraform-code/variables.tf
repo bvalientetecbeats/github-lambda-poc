@@ -1,6 +1,6 @@
 variable "aws_region" {
   description = "The AWS region to deploy infrastructure"
-  default     = "#{codebuild.TF_VAR_REGION}"
+  default     = "#{TF_VAR_REGION}"
 }
 
 variable "function_name" {
