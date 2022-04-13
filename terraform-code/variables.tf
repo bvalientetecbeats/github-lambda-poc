@@ -17,3 +17,7 @@ variable "lambda_runtime" {
 variable "lambda_handler" {
   description = "The handler to use for the Lambda function"  
 }
+
+variable "state_bucket" {
+  description = "The name of the S3 bucket to use for the Terraform state"  
+}
