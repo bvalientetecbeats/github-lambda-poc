@@ -1,7 +1,7 @@
 version: 0.2
 env:
   variables:
-    - lambda_artifact: "lambda_artifact.zip"
+    lambda_artifact: "lambda_artifact.zip"
 phases:
   install:
     runtime-versions:
