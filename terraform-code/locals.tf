@@ -1,4 +1,4 @@
 locals {
-  runtime           = "3.6"
-  handler           = "lambda_function.lambda_handler"
+  runtime           = "#{TF_VAR_RUNTIME}"
+  handler           = "#{TF_VAR_HANDLER}"
 }

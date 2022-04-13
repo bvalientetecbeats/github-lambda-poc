@@ -23,8 +23,8 @@ resource "aws_iam_role" "iam_for_lambda" {
 resource "aws_lambda_function" "lambda" {
   function_name = local.function_name
 
-  filename         = "${data.archive_file.zip.output_path}"
-  source_code_hash = "${data.archive_file.zip.output_base64sha256}"
+  filename         = "Lambda_#{CODEBUILD_BUILD_NUMBER.zip}"
+  source_code_hash = filebase64sha256("Lambda_#{CODEBUILD_BUILD_NUMBER.zip}")
 
   role    = aws_iam_role.iam_for_lambda.arn
   handler = local.handler

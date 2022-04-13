@@ -16,12 +16,13 @@ phases:
       - terraform init
   build:
     commands:
-      #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
-      - terraform apply
       - echo "Zipping deployment package..."
       - pwd
       - cd ../.build/
       - zip Lambda_$CODEBUILD_BUILD_NUMBER.zip lambda_function.py
+      - echo "Deploying new Lambda function..."
+      #- if [ $${TF_ACTION} == "apply" ]; then terraform apply; fi
+      - terraform apply
   post_build:
     commands:
       - echo "Updating Lambda function..."
