@@ -1,8 +1,8 @@
 version: 0.2
 env:
   variables:
-    build_number: ${CODEBUILD_BUILD_NUMBER}
-#    function_name: $TF_VAR_lambda_function_name
+    build_number: $CODEBUILD_BUILD_NUMBER
+    lambda_function_name: $TF_VAR_lambda_function_name
 #    region: $TF_VAR_region
 #    service_type: $TF_VAR_service_type
 #    lambda_runtime: $TF_VAR_lambda_runtime

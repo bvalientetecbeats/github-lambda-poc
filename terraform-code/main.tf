@@ -28,15 +28,3 @@ resource "aws_lambda_function" "lambda" {
   handler = var.lambda_handler
   runtime = var.lambda_runtime
 }
-
-output "service_type" {
-  value = var.service_type
-}
-
-output "lambda_function_name" { 
-  value = var.lambda_function_name  
-}
-
-output "lambda_handler" {
-  value = var.lambda_handler
-}
