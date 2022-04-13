@@ -1,12 +1,19 @@
 version: 0.2
+#env:
+#  variables:
+#    function_name: $TF_VAR_lambda_function_name
+#    region: $TF_VAR_region
+#    service_type: $TF_VAR_service_type
+#    lambda_runtime: $TF_VAR_lambda_runtime
 phases:
   install:
     runtime-versions:
       python: 3.8
     on-failure: ABORT
     commands:
-      - echo ${TF_VAR_LAMBDA_FUNCTION_NAME}
-      - echo ${TF_VAR_REGION}
+      - echo ${TF_VAR_lambda_function_name}
+      - echo ${TF_VAR_region}
+      - echo ${function_name}
       - echo "Installing dependencies..."
       - apt install unzip -y
       - pip install -r requirements.txt -t lib
@@ -31,5 +38,5 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Updating Lambda function..."
-      - aws lambda update-function-code --function-name ${TF_LAMBDA_FUNCTION_NAME} --zip-file fileb://Lambda_${CODEBUILD_BUILD_NUMBER}.zip
+      - aws lambda update-function-code --function-name ${TF_LAMBDA_function_name} --zip-file fileb://Lambda_${CODEBUILD_BUILD_NUMBER}.zip
       - echo "Lambda updated successfully!"

@@ -21,10 +21,26 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  function_name = var.TF_VAR_LAMBDA_FUNCTION_NAME
+  function_name = var.lambda_function_name
   filename         = "Lambda_${var.CODEBUILD_BUILD_NUMBER}.zip"
   source_code_hash = filebase64sha256("Lambda_${var.CODEBUILD_BUILD_NUMBER}.zip")
   role    = aws_iam_role.iam_for_lambda.arn
-  handler = var.TF_VAR_LAMBDA_HANDLER
-  runtime = var.TF_VAR_LAMBDA_RUNTIME
+  handler = var.lambda_handler
+  runtime = var.lambda_runtime
+}
+
+output "service_type" {
+  value = var.service_type
+}
+
+output "lambda_function_name" { 
+  value = var.lambda_function_name  
+}
+
+output "lambda_handler" {
+  value = var.lambda_handler
+}
+
+output "codebuild_build_number" {
+  value = var.CODEBUILD_BUILD_NUMBER
 }

@@ -3,23 +3,19 @@ variable "aws_region" {
   default = "us-west-2"  
 }
 
-variable "TF_VAR_REGION" {
-  description = "The AWS region to use"
-}
-
-variable "TF_VAR_LAMBDA_FUNCTION_NAME" {
+variable "lambda_function_name" {
   description = "The name of the Lambda function"
 }
 
-variable "TF_VAR_SERVICE_TYPE" {
+variable "service_type" {
   description = "The type of service to create"
 }
 
-variable "TF_VAR_LAMBDA_RUNTIME" {
+variable "lambda_runtime" {
   description = "The runtime to use for the Lambda function"
 }
 
-variable "TF_VAR_LAMBDA_HANDLER" {
+variable "lambda_handler" {
   description = "The handler to use for the Lambda function"  
 }
 
