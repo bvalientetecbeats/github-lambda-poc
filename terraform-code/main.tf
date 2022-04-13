@@ -21,11 +21,9 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  function_name = local.function_name
-
+  function_name = var.function_name
   filename         = "Lambda_#{CODEBUILD_BUILD_NUMBER.zip}"
   source_code_hash = filebase64sha256("Lambda_#{CODEBUILD_BUILD_NUMBER.zip}")
-
   role    = aws_iam_role.iam_for_lambda.arn
   handler = local.handler
   runtime = local.runtime
