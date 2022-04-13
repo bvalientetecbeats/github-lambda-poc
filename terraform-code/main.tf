@@ -1,6 +1,6 @@
 # Specify the provider and access details
 provider "aws" {
-  region = var.aws_region
+  region = "${TF_VAR_REGION}"
 }
 
 data "aws_iam_policy_document" "policy" {
@@ -21,10 +21,10 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  function_name = var.function_name
-  filename         = "Lambda_${var.build_number}.zip"
-  source_code_hash = filebase64sha256("Lambda_${var.build_number}.zip")
+  function_name = "${TF_VAR_LAMBDA_FUNCTION_NAME}"
+  filename         = "Lambda_${CODEBUILD_BUILD_NUMBER}.zip"
+  source_code_hash = filebase64sha256("Lambda_${CODEBUILD_BUILD_NUMBER}.zip")
   role    = aws_iam_role.iam_for_lambda.arn
-  handler = var.handler
-  runtime = var.runtime
+  handler = "${TF_VAR_LAMBDA_HANDLER}"
+  runtime = "${TF_VAR_LAMBDA_RUNTIME}"
 }
