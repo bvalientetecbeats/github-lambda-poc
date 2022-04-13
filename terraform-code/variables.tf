@@ -12,3 +12,8 @@ variable "service_type" {
   description = "The service type"
   default     = "#{codebuild.TF_VAR_SERVICE_TYPE}"
 }
+
+variable "build_number" {
+  description = "The build number"
+  default     = "#{CODEBUILD_BUILD_NUMBER}"
+}
