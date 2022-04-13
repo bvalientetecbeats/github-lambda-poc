@@ -26,7 +26,7 @@ phases:
       - cd ../.build/
       - chmod 644 lambda_function.py
       - zip ${lambda_artifact} lambda_function.py
-      - ls && pwd
+      - ls -l && pwd
       - mkdir -p unzip
       - unzip ${lambda_artifact} -d unzip
       - ls -l unzip
