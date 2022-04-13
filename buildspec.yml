@@ -20,7 +20,7 @@ phases:
     on-failure: ABORT
     commands:
       - echo "Zipping deployment package..."
-      - cd ../build/
+      - cd ../.build/
       - zip Lambda_Artifact.zip lambda_function.py
       - ls && pwd
       - echo "Deploying new Lambda function..."
