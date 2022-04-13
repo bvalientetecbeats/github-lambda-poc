@@ -25,6 +25,6 @@ resource "aws_lambda_function" "lambda" {
   filename         = "Lambda_${var.build_number}.zip"
   source_code_hash = filebase64sha256("Lambda_${var.build_number}.zip")
   role    = aws_iam_role.iam_for_lambda.arn
-  handler = local.handler
-  runtime = local.runtime
+  handler = var.handler
+  runtime = var.runtime
 }
