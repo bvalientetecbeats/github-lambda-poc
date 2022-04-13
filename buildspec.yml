@@ -1,7 +1,7 @@
 version: 0.2
 env:
   variables:
-    TF_VAR_REGION: $TF_VAR_REGION
+    VAR_REGION: $TF_VAR_REGION
     TF_LAMBDA_FUNCTION_NAME: $TF_LAMBDA_FUNCTION_NAME
 phases:
   install:
@@ -9,12 +9,12 @@ phases:
       python: 3.8
     on-failure: ABORT
     commands:
+      - echo $VAR_REGION
       - echo "Installing dependencies..."
       - apt install unzip -y
       - pip install -r requirements.txt -t lib
       - wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
-      - unzip terraform_1.1.8_linux_amd64.zip
-      - mv terraform /usr/local/bin/
+      - unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
   pre_build:
     on-failure: ABORT
     commands:
