@@ -30,6 +30,7 @@ phases:
       - mkdir -p unzip
       - unzip ${lambda_artifact} -d unzip
       - ls -l unzip
+      - mv ${lambda_artifact} ../terraform-code/
       - cd ../terraform-code/
       - echo "Starting Terraform plan..."
       - terraform plan
