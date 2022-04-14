@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: /tmp/project/circleci-project-setup/.build
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/ubuntu:20.04
+      - image: ubuntu:20.04
     steps:
       - checkout
       - run:
