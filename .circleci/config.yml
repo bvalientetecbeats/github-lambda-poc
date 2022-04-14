@@ -28,7 +28,6 @@ jobs:
     docker:
       - image: ubuntu:20.04
     steps:
-      - checkout
       - run:
           name: terraform init & plan
           command: |
