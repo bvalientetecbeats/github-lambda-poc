@@ -16,9 +16,7 @@ jobs:
             echo "Zipping deployment package..."
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
-            ls -la && pwd
             mv lambda_artifact.zip ../terraform-code/
-            ls -la ../terraform-code/
       - persist_to_workspace:
           root: .
           paths:
@@ -33,6 +31,9 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
+            echo "Starting Terraform init and plan..."
+            cd ./terraform-code/
+            ls -la && pwd
             terraform init -input=false
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
