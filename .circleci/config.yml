@@ -40,7 +40,7 @@ jobs:
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
             cd ./terraform-code/
-            echo "AWS REGION: $TF_VAR_aws_region"
+            echo -x "AWS REGION: $TF_VAR_aws_region"
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
             echo "Starting terraform init..."
             terraform --version
