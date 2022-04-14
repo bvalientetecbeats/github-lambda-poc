@@ -1,7 +1,3 @@
-variable "aws_region" {
-  description = "value of the aws_region"
-}
-
 variable "lambda_function_name" {
   description = "The name of the Lambda function"
 }
