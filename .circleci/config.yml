@@ -17,7 +17,7 @@ jobs:
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
       - store_artifacts:
-          path: ./.build/
+          path: ./.build/lambda_artifact.zip
           destination: lambda_artifact.zip
       - persist_to_workspace:
           root: .
@@ -39,7 +39,8 @@ jobs:
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
-            cd ./terraform-code/            
+            cd ./terraform-code/
+            echo $TF_VAR_aws_region       
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
             echo "Starting terraform init..."
             terraform init -input=false -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
@@ -66,7 +67,7 @@ jobs:
           paths:
             - .
             - /tmp/project/circleci-project-setup/terraform-code/
-  plan-deploy:
+  approve-deploy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -136,7 +137,7 @@ workflows:
       - apply:
           requires:
             - hold-apply
-      - hold-deploy:
+      - approve-deploy:
           type: approval
           requires:
             - apply
