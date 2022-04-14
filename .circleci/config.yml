@@ -12,12 +12,13 @@ jobs:
           command: |
             echo "Getting started with AWS Lambda deployment..."
             echo "Installing dependencies..."
-            apt update -y && apt install -y unzip
+            apt update -y && apt install -y zip
             echo "Zipping deployment package..."
             cd ./.build/
-            ls -la && pwd
             zip lambda_artifact.zip lambda_function.py
+            ls -la && pwd
             mv lambda_artifact.zip ../terraform-code/
+            ls -la ../terraform-code/
       - persist_to_workspace:
           root: .
           paths:
