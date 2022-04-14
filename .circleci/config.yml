@@ -14,6 +14,7 @@ jobs:
             echo "Installing dependencies..."
             apt-get update -y && apt-get install -y unzip
             echo "Zipping deployment package..."
+            cd ./.build/
             ls -la && pwd
             zip lambda_artifact.zip lambda_function.py
             mv lambda_artifact.zip ../terraform-code/
