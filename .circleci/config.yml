@@ -27,14 +27,12 @@ jobs:
   plan-apply:    
     working_directory: /tmp/project/
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/ubuntu:20.04
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
       - checkout
       - run:
           name: terraform init & plan
           command: |
-            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
-            unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             terraform init -input=false
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
