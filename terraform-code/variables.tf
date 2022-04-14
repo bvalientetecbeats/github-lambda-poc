@@ -1,5 +1,6 @@
 variable "aws_region" {
-  description = "The AWS region to use"  
+  description = "The AWS region to use"
+  default     = ""
 }
 
 variable "lambda_function_name" {
