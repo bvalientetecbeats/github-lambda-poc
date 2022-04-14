@@ -1,8 +1,33 @@
 version: 2
 
 jobs:
-  plan-apply:
-    working_directory: /tmp/project
+  build:
+    working_directory: ~/project/.build
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - checkout
+      - run:
+          name: build lambda
+          command: |
+            echo "Getting started with AWS Lambda deployment..."
+            echo "Installing dependencies..."
+            apt install unzip -y
+            pip install -r requirements.txt -t lib
+            echo "Zipping deployment package..."
+            chmod 644 lambda_function.py
+            zip lambda_artifact.zip lambda_function.py
+            mv lambda_artifact.zip ../terraform-code/
+      - store_artifacts:
+          path: /tmp/project/terraform-code/lambda_artifact.zip
+          destination: artifact-file
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+            - /tmp/project/terraform-code/lambda_artifact.zip
+  plan-apply:    
+    working_directory: /tmp/project/terraform-code
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -10,13 +35,14 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
+            pwd
             terraform init -input=false
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
           root: .
           paths:
             - .
-
+            - /tmp/project/terraform-code/lambda_artifact.zip
   apply:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -26,12 +52,39 @@ jobs:
       - run:
           name: terraform
           command: |
+            echo "Deploying new Lambda function..."
             terraform apply -auto-approve tfapply
       - persist_to_workspace:
           root: .
           paths:
             - .
-
+            - /tmp/project/terraform-code/lambda_artifact.zip
+  plan-deploy:
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Waiting for approval..."
+  deploy:
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Updating Lambda function..."
+            aws lambda update-function-code --function-name $TF_VAR_lambda_function_name --zip-file fileb://lambda_artifact.zip
+            echo "Lambda updated successfully!"  
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   plan-destroy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -46,7 +99,6 @@ jobs:
           root: .
           paths:
             - .
-
   destroy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -61,6 +113,7 @@ workflows:
   version: 2
   plan_approve_apply:
     jobs:
+      - build
       - plan-apply
       - hold-apply:
           type: approval
@@ -69,6 +122,13 @@ workflows:
       - apply:
           requires:
             - hold-apply
+      - hold-deploy:
+          type: approval
+          requires:
+            - apply
+      - deploy:
+          requires:
+            - hold-deploy
       - plan-destroy:
           requires:
             - apply
@@ -79,3 +139,4 @@ workflows:
       - destroy:
           requires:
             - hold-destroy
+      
