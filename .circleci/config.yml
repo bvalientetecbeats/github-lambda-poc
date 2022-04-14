@@ -13,7 +13,6 @@ jobs:
             echo "Getting started with AWS Lambda deployment..."
             echo "Installing dependencies..."
             apt-get update -y && apt-get install -y unzip
-            pip install -r requirements.txt -t lib
             echo "Zipping deployment package..."
             chmod 644 lambda_function.py
             zip lambda_artifact.zip lambda_function.py
