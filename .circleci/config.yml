@@ -22,7 +22,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/
   plan-apply:    
     working_directory: /tmp/project/circleci-project-setup/terraform-code
     docker:
@@ -39,7 +39,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/
   apply:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -55,7 +55,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/
   plan-deploy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -70,7 +70,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/
   deploy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
