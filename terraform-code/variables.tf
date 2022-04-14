@@ -1,5 +1,6 @@
 variable "aws_region" {
-  default = "us-east-1"  
+  description = "value of the aws_region"
+  type        = "string"
 }
 
 variable "lambda_function_name" {
