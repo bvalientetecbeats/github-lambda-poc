@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   build:
-    working_directory: /tmp/project/circleci-project-setup/.build
+    working_directory: /tmp/project/
     docker:
       - image: ubuntu:20.04
     steps:
@@ -24,7 +24,7 @@ jobs:
             - .
             - ./terraform-code/lambda_artifact.zip
   plan-apply:    
-    working_directory: /tmp/project/circleci-project-setup/terraform-code
+    working_directory: /tmp/project/
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/ubuntu:20.04
     steps:
