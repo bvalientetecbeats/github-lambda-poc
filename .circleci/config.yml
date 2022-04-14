@@ -33,10 +33,16 @@ jobs:
           name: terraform init & plan
           command: |
             echo "Starting Terraform init and plan..."
-            cd ./terraform-code/
-            apt update -y && apt install -y curl
+            echo "Installing dependencies..."
+            apt update -y && apt install -y curl unzip
+            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
+            unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
+            echo "Getting artifact..."
+            cd ./terraform-code/            
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
+            echo "Starting terraform init..."
             terraform init -input=false -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
+            echo "Starting terraform plan..."
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
           root: .
