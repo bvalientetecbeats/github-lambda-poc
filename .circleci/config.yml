@@ -16,12 +16,13 @@ jobs:
             echo "Zipping deployment package..."
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
-            mv lambda_artifact.zip ../terraform-code/
+      - store_artifacts:
+          path: ./.build/
+          destination: lambda_artifact.zip
       - persist_to_workspace:
           root: .
           paths:
             - .
-            - ./terraform-code/lambda_artifact.zip
   plan-apply:    
     working_directory: /tmp/project/
     docker:
@@ -33,7 +34,7 @@ jobs:
           command: |
             echo "Starting Terraform init and plan..."
             cd ./terraform-code/
-            ls -la && pwd
+            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
             terraform init -input=false -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
