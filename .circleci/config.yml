@@ -35,7 +35,7 @@ jobs:
             echo "Starting Terraform init and plan..."
             echo "Installing dependencies..."
             apt update -y
-            apt install -y curl unzip
+            apt install -y curl unzip wget
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
