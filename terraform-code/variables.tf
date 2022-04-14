@@ -1,6 +1,4 @@
-variable "aws_region" {
-  description = "The AWS region to use"
-}
+aws_region = "us-east-1"
 
 variable "lambda_function_name" {
   description = "The name of the Lambda function"
