@@ -43,6 +43,7 @@ jobs:
             echo $TF_VAR_aws_region       
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
             echo "Starting terraform init..."
+            terraform --version
             terraform init -input=false -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var-file variables.tf
