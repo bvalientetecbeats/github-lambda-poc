@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   build:
-    working_directory: ~/project/.build
+    working_directory: /tmp/project/circleci-project-setup/.build
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -18,16 +18,13 @@ jobs:
             chmod 644 lambda_function.py
             zip lambda_artifact.zip lambda_function.py
             mv lambda_artifact.zip ../terraform-code/
-      - store_artifacts:
-          path: /tmp/project/terraform-code/lambda_artifact.zip
-          destination: artifact-file
       - persist_to_workspace:
           root: .
           paths:
             - .
-            - /tmp/project/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
   plan-apply:    
-    working_directory: /tmp/project/terraform-code
+    working_directory: /tmp/project/circleci-project-setup/terraform-code
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -42,7 +39,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
   apply:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -58,7 +55,7 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/terraform-code/lambda_artifact.zip
+            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
   plan-deploy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -69,6 +66,11 @@ jobs:
           name: deploy
           command: |        
             echo "Waiting for approval..."
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+            - /tmp/project/circleci-project-setup/terraform-code/lambda_artifact.zip
   deploy:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
