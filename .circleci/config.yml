@@ -68,6 +68,7 @@ jobs:
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
+            ls -la && pwd
             cd ./terraform-code/
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
             | grep -o 'https://[^"]*' \
