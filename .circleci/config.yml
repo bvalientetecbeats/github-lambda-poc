@@ -121,7 +121,6 @@ jobs:
             echo "Deploying Lambda artifact..."
             cd ./terraform-code/
             ls -la && pwd
-            aws lambda list-functions --query 'Functions[].FunctionName' --output text
             aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip
             echo "Lambda updated successfully!"  
       - persist_to_workspace:
