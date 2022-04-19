@@ -16,6 +16,7 @@ jobs:
             echo "Zipping deployment package..."
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
+            cp lambda_artifact.zip ../terraform-code/
       - store_artifacts:
           path: ./.build/lambda_artifact.zip
           destination: lambda_artifact.zip
