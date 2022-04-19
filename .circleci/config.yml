@@ -40,7 +40,9 @@ jobs:
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
             cd ./terraform-code/
-            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
+            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
+            | grep -o 'https://[^"]*' \
+            | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
             ls -la && pwd
             echo "Starting terraform init..."
             terraform --version
