@@ -34,7 +34,7 @@ jobs:
           command: |
             echo "Starting Terraform init and plan..."
             echo "Installing dependencies..."
-            apt update -y
+            apt update -y 
             apt install -y curl unzip wget
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
@@ -43,7 +43,6 @@ jobs:
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
             | grep -o 'https://[^"]*' \
             | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
-            ls -la && pwd
             echo "Starting terraform init..."
             terraform --version
             terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
@@ -53,26 +52,35 @@ jobs:
           root: .
           paths:
             - .
-            - ./terraform-code/
   apply:
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+      - image: ubuntu:20.04
     steps:
       - attach_workspace:
           at: .
       - run:
           name: terraform
           command: |
-            echo "Deploying new Lambda function..."
-            terraform apply -auto-approve tfapply
+            echo "Deploying terraform changes..."
+            echo "Installing dependencies..."
+            apt update -y 
+            apt install -y curl unzip wget
+            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
+            unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
+            echo "Getting artifact..."
+            cd ./terraform-code/
+            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
+            | grep -o 'https://[^"]*' \
+            | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
+            echo "Starting terraform apply..."
+            terraform apply -auto-approve tfapply -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
       - persist_to_workspace:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/
   approve-deploy:
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+      - image: ubuntu:20.04
     steps:
       - attach_workspace:
           at: .
@@ -84,10 +92,9 @@ jobs:
           root: .
           paths:
             - .
-            - /tmp/project/circleci-project-setup/terraform-code/
   deploy:
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+      - image: ubuntu:20.04
     steps:
       - attach_workspace:
           at: .
@@ -95,7 +102,25 @@ jobs:
           name: deploy
           command: |        
             echo "Updating Lambda function..."
-            aws lambda update-function-code --function-name $TF_VAR_lambda_function_name --zip-file fileb://lambda_artifact.zip
+            echo "Installing dependencies..."
+            apt update -y 
+            apt install -y curl unzip wget
+            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
+            unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
+            echo "Configuring AWS CLI..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Getting artifact..."
+            cd ./terraform-code/
+            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
+            | grep -o 'https://[^"]*' \
+            | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
+            echo "Deploying Lambda artifact..."
+            aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip --profile default
             echo "Lambda updated successfully!"  
       - persist_to_workspace:
           root: .
@@ -133,13 +158,13 @@ workflows:
       - plan-apply:
           requires: 
             - build  
-      - hold-apply:
+      - approve-apply:
           type: approval
           requires:
             - plan-apply
       - apply:
           requires:
-            - hold-apply
+            - approve-apply
       - approve-deploy:
           type: approval
           requires:
@@ -150,11 +175,11 @@ workflows:
       - plan-destroy:
           requires:
             - apply
-      - hold-destroy:
+      - approve-destroy:
           type: approval
           requires:
             - plan-destroy
       - destroy:
           requires:
-            - hold-destroy
+            - approve-destroy
       
