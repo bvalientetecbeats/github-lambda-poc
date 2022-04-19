@@ -115,6 +115,7 @@ jobs:
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_DEFAULT_REGION
             echo "Getting artifact..."
+            ls -la && pwd
             cd ./terraform-code/
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
             | grep -o 'https://[^"]*' \
