@@ -71,8 +71,8 @@ jobs:
             ls -la && pwd
             cd ./terraform-code/
             ls -la && pwd
-            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
-            | grep -o 'https://[^"]*' | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
+            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
+            ls -la && pwd
             echo "Starting terraform apply..."
             terraform apply -auto-approve tfapply
       - persist_to_workspace:
