@@ -105,7 +105,7 @@ jobs:
             echo "Updating Lambda function..."
             echo "Installing dependencies..."
             apt update -y 
-            apt install -y curl unzip wget less
+            apt install -y curl unzip wget
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Configuring AWS CLI..."
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -134,18 +134,10 @@ workflows:
       - build
       - plan-apply:
           requires: 
-            - build  
-      - approve-apply:
-          type: approval
-          requires:
-            - plan-apply
+            - build
       - apply:
           requires:
-            - approve-apply
-      - approve-deploy:
-          type: approval
-          requires:
-            - apply
+            - plan-apply
       - deploy:
           requires:
-            - approve-deploy      
+            - apply
