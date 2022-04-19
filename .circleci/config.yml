@@ -60,11 +60,13 @@ jobs:
     docker:
       - image: ubuntu:20.04
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: terraform apply
-          command: |
+          command: |            
             echo "Deploying terraform changes..."
+            ls -la && pwd
             echo "Installing dependencies..."
             apt update -y 
             apt install -y curl unzip wget
@@ -72,9 +74,6 @@ jobs:
             unzip terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Getting artifact..."
             cd ./terraform-code/
-            curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts \
-            | grep -o 'https://[^"]*' \
-            | wget --verbose --header "Circle-Token: $var_circleci_api_access" --input-file -
             echo "Starting terraform apply..."
             terraform apply -auto-approve tfapply
       - persist_to_workspace:
@@ -100,7 +99,8 @@ jobs:
     docker:
       - image: ubuntu:20.04
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: deploy
           command: |        
