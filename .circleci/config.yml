@@ -111,15 +111,19 @@ jobs:
             echo "Configuring AWS CLI..."
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            ./aws/install            
+            ./aws/install
+            aws --version
+            echo "Setting up AWS credentials..."        
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_DEFAULT_REGION
+            ls -la /home/ubuntu/
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
-            echo "Getting artifact..."
+            aws s3 ls
+            echo "Getting artifact..."                        
             ls -la && pwd
             cd ./terraform-code/
-            echo "Deploying Lambda artifact..."
+            echo "Deploying Lambda artifact..."            
             aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip
             echo "Lambda updated successfully!"  
       - persist_to_workspace:
