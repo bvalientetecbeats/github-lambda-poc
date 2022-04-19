@@ -46,7 +46,7 @@ jobs:
             ls -la && pwd
             echo "Starting terraform init..."
             terraform --version
-            terraform init -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
+            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
