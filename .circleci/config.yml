@@ -53,13 +53,13 @@ jobs:
           paths:
             - .
   apply:
+    working_directory: /tmp/project/
     docker:
       - image: ubuntu:20.04
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
       - run:
-          name: terraform
+          name: terraform apply
           command: |
             echo "Deploying terraform changes..."
             echo "Installing dependencies..."
@@ -93,11 +93,11 @@ jobs:
           paths:
             - .
   deploy:
+    working_directory: /tmp/project/
     docker:
       - image: ubuntu:20.04
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
       - run:
           name: deploy
           command: |        
