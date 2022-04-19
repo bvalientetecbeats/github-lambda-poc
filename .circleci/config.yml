@@ -130,30 +130,6 @@ jobs:
           root: .
           paths:
             - .
-  plan-destroy:
-    docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: terraform create destroy plan
-          command: |
-            terraform plan -destroy -out tfdestroy -var-file variables.tf
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  destroy:
-    docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: terraform destroy
-          command: |
-            terraform apply -auto-approve tfdestroy
 workflows:
   version: 2
   plan_approve_apply:
@@ -175,15 +151,4 @@ workflows:
             - apply
       - deploy:
           requires:
-            - approve-deploy
-      - plan-destroy:
-          requires:
-            - apply
-      - approve-destroy:
-          type: approval
-          requires:
-            - plan-destroy
-      - destroy:
-          requires:
-            - approve-destroy
-      
+            - approve-deploy      
