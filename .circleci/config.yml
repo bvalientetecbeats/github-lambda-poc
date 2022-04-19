@@ -41,6 +41,7 @@ jobs:
             echo "Getting artifact..."
             cd ./terraform-code/
             curl -H "Circle-Token: $var_circleci_api_access" https://circleci.com/api/v1.1/project/github/benjaminvaliente/github-lambda-poc/latest/artifacts
+            ls -la && pwd
             echo "Starting terraform init..."
             terraform --version
             terraform init -backend-config="access_key=$var_aws_access_key_id" -backend-config="secret_key=$var_aws_secret_access_key"
