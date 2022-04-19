@@ -116,14 +116,14 @@ jobs:
             echo "Setting up AWS credentials..."        
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Getting artifact..."                        
             ls -la && pwd
             cd ./terraform-code/
+            ls -la && pwd
             echo "Deploying Lambda artifact..."            
-            aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip
+            aws lambda update-function-code --function-name $var_lambda_function_name --region $AWS_DEFAULT_REGION --zip-file fileb://lambda_artifact.zip
             echo "Lambda updated successfully!"  
       - persist_to_workspace:
           root: .
