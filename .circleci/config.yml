@@ -17,9 +17,6 @@ jobs:
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
             cp lambda_artifact.zip ../terraform-code/
-      - store_artifacts:
-          path: ./.build/lambda_artifact.zip
-          destination: lambda_artifact.zip
       - persist_to_workspace:
           root: .
           paths:
@@ -47,13 +44,6 @@ jobs:
             terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var-file variables.tf
-      - store_artifacts:
-          path: ./terraform-code/variables.tf
-          destination: variables.tf
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
   apply:
     working_directory: /tmp/project/
     docker:
@@ -74,10 +64,6 @@ jobs:
             cd ./terraform-code/
             echo "Starting terraform apply..."
             terraform apply -auto-approve tfapply
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
   approve-deploy:
     docker:
       - image: ubuntu:20.04
@@ -88,10 +74,6 @@ jobs:
           name: deploy
           command: |        
             echo "Waiting for approval..."
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
   deploy:
     working_directory: /tmp/project/
     docker:
@@ -121,11 +103,7 @@ jobs:
             cd ./terraform-code/
             ls -la && pwd
             aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip
-            echo "Lambda updated successfully!"  
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
+            echo "Lambda updated successfully!"
 workflows:
   version: 2
   plan_approve_apply:
