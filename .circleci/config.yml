@@ -95,7 +95,7 @@ jobs:
   deploy:
     working_directory: /tmp/project/
     docker:
-      - image: ubuntu:20.04
+      - image: amazon/aws-cli:latest
     steps:
       - attach_workspace:
           at: .
@@ -104,8 +104,8 @@ jobs:
           command: |        
             echo "Updating Lambda function..."
             echo "Installing dependencies..."
-            apt update -y 
-            apt install -y curl unzip wget
+            yum update -y 
+            yum install -y curl unzip wget
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Configuring AWS CLI..."
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -118,7 +118,6 @@ jobs:
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
-            $AWS_PAGER:""
             echo "Deploying Lambda artifact..."
             cd ./terraform-code/
             ls -la && pwd
