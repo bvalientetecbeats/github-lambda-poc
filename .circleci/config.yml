@@ -104,8 +104,7 @@ jobs:
           command: |        
             echo "Updating Lambda function..."
             echo "Installing dependencies..."
-            yum update -y 
-            yum install -y curl unzip wget
+            yum install -y curl unzip wget tar gzip
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             echo "Configuring AWS CLI..."
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
