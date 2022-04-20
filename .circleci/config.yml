@@ -125,14 +125,10 @@ workflows:
       - build
       - plan-apply:
           requires: 
-            - build  
-      - approve-apply:
-          type: approval
-          requires:
-            - plan-apply
+            - build
       - apply:
           requires:
-            - approve-apply
+            - plan-apply
       - approve-deploy:
           type: approval
           requires:
