@@ -1,5 +1,4 @@
 version: 2
-
 jobs:
   build:
     working_directory: /tmp/project/
@@ -18,7 +17,7 @@ jobs:
             zip lambda_artifact.zip lambda_function.py
             cp lambda_artifact.zip ../terraform-code/
       - persist_to_workspace:
-          root: .
+          root: ~/
           paths:
             - /tmp/project/
   plan-apply:    
@@ -45,7 +44,7 @@ jobs:
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var-file variables.tf
       - persist_to_workspace:
-          root: .
+          root: ~/
           paths:
             - /tmp/project/
   apply:
