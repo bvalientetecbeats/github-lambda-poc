@@ -118,6 +118,7 @@ jobs:
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
+            $AWS_PAGER:""
             echo "Deploying Lambda artifact..."
             cd ./terraform-code/
             ls -la && pwd
