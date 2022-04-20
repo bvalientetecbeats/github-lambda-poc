@@ -20,7 +20,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ./terraform-code/
+            - /tmp/project/
   plan-apply:    
     working_directory: /tmp/project/
     docker:
@@ -47,7 +47,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ./terraform-code/
+            - /tmp/project/
   apply:
     working_directory: /tmp/project/
     docker:
@@ -71,7 +71,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ./terraform-code/
+            - /tmp/project/
   approve-deploy:
     docker:
       - image: ubuntu:20.04
@@ -85,7 +85,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ./terraform-code/
+            - /tmp/project/
   deploy:
     working_directory: /tmp/project/
     docker:
