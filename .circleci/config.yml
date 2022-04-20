@@ -20,6 +20,74 @@ jobs:
           root: .
           paths:
             - .
+  plan-apply:    
+    working_directory: /tmp/project/
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: terraform init & plan
+          command: |
+            echo "Starting Terraform init and plan..."
+            echo "Installing dependencies..."
+            apt update -y 
+            apt install -y curl unzip wget
+            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
+            unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
+            rm -rf terraform_1.1.8_linux_amd64.zip terraform
+            echo "Getting artifact..."
+            cd ./terraform-code/
+            echo "Starting terraform init..."
+            terraform --version
+            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
+            echo "Starting terraform plan..."
+            terraform plan -out tfapply -var-file variables.tf
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  apply:
+    working_directory: /tmp/project/
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: terraform apply
+          command: |            
+            echo "Deploying terraform changes..."
+            ls -la && pwd
+            echo "Installing dependencies..."
+            apt update -y 
+            apt install -y curl unzip wget
+            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
+            unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
+            rm -rf terraform_1.1.8_linux_amd64.zip terraform
+            echo "Getting artifact..."
+            cd ./terraform-code/
+            echo "Starting terraform apply..."
+            terraform apply -auto-approve tfapply
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  approve-deploy:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Waiting for approval..."
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   deploy:
     working_directory: /tmp/project/
     docker:
@@ -47,8 +115,7 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
-            cd ./terraform-code/
-            ls -la && pwd            
+            cd ./terraform-code/ 
             aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully!"
 workflows:
@@ -56,6 +123,20 @@ workflows:
   plan_approve_apply:
     jobs:
       - build
+      - plan-apply:
+          requires: 
+            - build  
+      - approve-apply:
+          type: approval
+          requires:
+            - plan-apply
+      - apply:
+          requires:
+            - approve-apply
+      - approve-deploy:
+          type: approval
+          requires:
+            - apply
       - deploy:
           requires:
-            - build
+            - approve-deploy
