@@ -55,8 +55,8 @@ jobs:
             ./aws/install
             aws --version
             echo "Setting up AWS credentials..."        
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
@@ -89,8 +89,8 @@ jobs:
             ./aws/install
             aws --version
             echo "Setting up AWS credentials..."        
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_TEST
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_TEST
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
@@ -123,8 +123,8 @@ jobs:
             ./aws/install
             aws --version
             echo "Setting up AWS credentials..."        
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
@@ -152,13 +152,13 @@ workflows:
           type: approval
           requires:
             - deploy-dev
-      - deploy-dev:
+      - deploy-test:
           requires:
             - approve-deploy-test
       - approve-deploy-prod:
           type: approval
           requires:
             - deploy-test
-      - deploy-dev:
+      - deploy-prod:
           requires:
             - approve-deploy-prod
