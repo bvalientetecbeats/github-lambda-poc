@@ -20,61 +20,7 @@ jobs:
           root: .
           paths:
             - .
-  plan-apply:    
-    working_directory: /tmp/project/
-    docker:
-      - image: ubuntu:20.04
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: terraform init & plan
-          command: |
-            echo "Starting Terraform init and plan..."
-            echo "Installing dependencies..."
-            apt update -y 
-            apt install -y curl unzip wget
-            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
-            unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
-            rm -rf terraform_1.1.8_linux_amd64.zip terraform
-            echo "Getting artifact..."
-            cd ./terraform-code/
-            echo "Starting terraform init..."
-            terraform --version
-            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
-            echo "Starting terraform plan..."
-            terraform plan -out tfapply -var-file variables.tf
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  apply:
-    working_directory: /tmp/project/
-    docker:
-      - image: ubuntu:20.04
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: terraform apply
-          command: |            
-            echo "Deploying terraform changes..."
-            ls -la && pwd
-            echo "Installing dependencies..."
-            apt update -y 
-            apt install -y curl unzip wget
-            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
-            unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
-            rm -rf terraform_1.1.8_linux_amd64.zip terraform
-            echo "Getting artifact..."
-            cd ./terraform-code/
-            echo "Starting terraform apply..."
-            terraform apply -auto-approve tfapply
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  approve-deploy:
+  approve-deploy-dev:
     docker:
       - image: ubuntu:20.04
     steps:
@@ -88,7 +34,7 @@ jobs:
           root: .
           paths:
             - .
-  deploy:
+  deploy-dev:
     working_directory: /tmp/project/
     docker:
       - image: ubuntu:20.04
@@ -109,30 +55,110 @@ jobs:
             ./aws/install
             aws --version
             echo "Setting up AWS credentials..."        
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
             cd ./terraform-code/ 
-            aws lambda update-function-code --function-name $var_lambda_function_name --zip-file fileb://lambda_artifact.zip --no-cli-pager
-            echo "Lambda updated successfully!"
+            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_DEV --zip-file fileb://lambda_artifact.zip --no-cli-pager
+            echo "Lambda updated successfully in Development environment!"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy-test:
+    working_directory: /tmp/project/
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Updating Lambda function..."
+            echo "Installing dependencies..."
+            apt update -y
+            apt install -y curl unzip wget tar gzip
+            AWS_PAGER=''
+            echo "Configuring AWS CLI..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -qq awscliv2.zip
+            ./aws/install
+            aws --version
+            echo "Setting up AWS credentials..."        
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_TEST
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_TEST
+            aws configure set default.region $AWS_DEFAULT_REGION
+            rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
+            aws s3 ls
+            echo "Deploying Lambda artifact..."
+            cd ./terraform-code/ 
+            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_TEST --zip-file fileb://lambda_artifact.zip --no-cli-pager
+            echo "Lambda updated successfully in Development environment!"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy-prod:
+    working_directory: /tmp/project/
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Updating Lambda function..."
+            echo "Installing dependencies..."
+            apt update -y
+            apt install -y curl unzip wget tar gzip
+            AWS_PAGER=''
+            echo "Configuring AWS CLI..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -qq awscliv2.zip
+            ./aws/install
+            aws --version
+            echo "Setting up AWS credentials..."        
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+            aws configure set default.region $AWS_DEFAULT_REGION
+            rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
+            aws s3 ls
+            echo "Deploying Lambda artifact..."
+            cd ./terraform-code/ 
+            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager
+            echo "Lambda updated successfully in Development environment!"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 workflows:
   version: 2
-  plan_approve_apply:
+  lambda_deployment:
     jobs:
       - build
-      - plan-apply:
-          requires: 
-            - build
-      - apply:
-          requires:
-            - plan-apply
-      - approve-deploy:
+      - approve-deploy-dev:
           type: approval
           requires:
-            - apply
-      - deploy:
+            - build
+      - deploy-dev:
           requires:
-            - approve-deploy
+            - approve-deploy-dev
+      - approve-deploy-test:
+          type: approval
+          requires:
+            - deploy-dev
+      - deploy-dev:
+          requires:
+            - approve-deploy-test
+      - approve-deploy-prod:
+          type: approval
+          requires:
+            - deploy-test
+      - deploy-dev:
+          requires:
+            - approve-deploy-prod
