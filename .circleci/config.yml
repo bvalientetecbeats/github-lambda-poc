@@ -68,6 +68,20 @@ jobs:
           root: .
           paths:
             - .
+  unit-test:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "This will run an unit test..."
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   approve-deploy-test:
     docker:
       - image: ubuntu:20.04
@@ -175,6 +189,9 @@ workflows:
           requires:
             - build
       - deploy-dev:
+          requires:
+            - approve-deploy-dev
+      - unit-test:
           requires:
             - approve-deploy-dev
       - approve-deploy-test:
