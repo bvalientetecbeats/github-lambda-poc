@@ -152,14 +152,14 @@ jobs:
             ./aws/install
             aws --version
             echo "Setting up AWS credentials..."        
-            aws configure set prod.aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
-            aws configure set prod.aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
-            aws configure set prod.region $AWS_DEFAULT_REGION_PROD
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+            aws configure set default.region $AWS_DEFAULT_REGION_PROD
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
             cd ./.build/
-            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager --profile prod
+            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully to Production environment!"
       - persist_to_workspace:
           root: .
