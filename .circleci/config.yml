@@ -226,17 +226,16 @@ workflows:
             - approve-deploy-test
       - integration-test:
           requires:
-            - approve-deploy-test
+            - deploy-test
       - load-test:
           requires:
-            - approve-deploy-test
+            - deploy-test
       - misc-test:
           requires:
-            - approve-deploy-test
+            - deploy-test
       - approve-deploy-prod:
           type: approval
           requires:
-            - deploy-test
             - integration-test
             - load-test
             - misc-test
