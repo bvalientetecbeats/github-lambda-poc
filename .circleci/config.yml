@@ -62,6 +62,7 @@ jobs:
             aws s3 ls
             echo "Deploying Lambda artifact..."
             cd ./.build/
+            echo $VAR_LAMBDA_FUNCTION_NAME_DEV
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_DEV --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
       - persist_to_workspace:
