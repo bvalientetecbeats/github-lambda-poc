@@ -11,10 +11,12 @@ jobs:
           command: |
             echo "Getting started with AWS Lambda deployment..."
             echo "Installing dependencies..."
-            apt update -y && apt install -y zip
+            apt update -y && apt install -y zip > /dev/null 2>&1
             echo "Zipping deployment package..."
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
+            cd ..
+            ls -la && pwd
             cp lambda_artifact.zip ../terraform-code/
       - persist_to_workspace:
           root: .
@@ -33,7 +35,7 @@ jobs:
             echo "Starting Terraform init and plan..."
             echo "Installing dependencies..."
             apt update -y 
-            apt install -y curl unzip wget
+            apt install -y curl unzip wget > /dev/null 2>&1
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             rm -rf terraform_1.1.8_linux_amd64.zip terraform
@@ -76,7 +78,7 @@ jobs:
             ls -la && pwd
             echo "Installing dependencies..."
             apt update -y 
-            apt install -y curl unzip wget
+            apt install -y curl unzip wget > /dev/null 2>&1
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             rm -rf terraform_1.1.8_linux_amd64.zip terraform
