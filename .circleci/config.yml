@@ -215,11 +215,10 @@ workflows:
             - approve-deploy-dev
       - unit-test:
           requires:
-            - approve-deploy-dev
+            - deploy-dev
       - approve-deploy-test:
           type: approval
           requires:
-            - deploy-dev
             - unit-test
       - deploy-test:
           requires:
