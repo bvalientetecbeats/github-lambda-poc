@@ -15,7 +15,6 @@ jobs:
             echo "Zipping deployment package..."
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
-            cp lambda_artifact.zip ../terraform-code/
       - persist_to_workspace:
           root: .
           paths:
@@ -62,9 +61,23 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
-            cd ./terraform-code/ 
+            cd ./.build/
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_DEV --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  approve-deploy-test:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Waiting for approval..."
       - persist_to_workspace:
           root: .
           paths:
@@ -97,9 +110,23 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
-            cd ./terraform-code/ 
+            cd ./.build/
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_TEST --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  approve-deploy-prod:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: deploy
+          command: |        
+            echo "Waiting for approval..."
       - persist_to_workspace:
           root: .
           paths:
@@ -131,7 +158,7 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
-            cd ./terraform-code/ 
+            cd ./.build/
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
       - persist_to_workspace:
