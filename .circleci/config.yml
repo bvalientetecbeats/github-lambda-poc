@@ -75,7 +75,7 @@ jobs:
       - run:
           name: unit-test
           command: |        
-            sleep 30
+            sleep 10
             echo "This will run an unit test..."
   approve-deploy-test:
     docker:
@@ -133,7 +133,7 @@ jobs:
       - run:
           name: integration-test
           command: |        
-            sleep 30
+            sleep 10
             echo "This will run an integration test..."
   load-test:
     docker:
@@ -142,7 +142,7 @@ jobs:
       - run:
           name: integration-test
           command: |        
-            sleep 30
+            sleep 10
             echo "This will run an load test..."
   misc-test:
     docker:
@@ -151,7 +151,7 @@ jobs:
       - run:
           name: integration-test
           command: |        
-            sleep 30
+            sleep 10
             echo "This will run an miscellaneous test..."
   approve-deploy-prod:
     docker:
