@@ -159,7 +159,7 @@ jobs:
             aws s3 ls
             echo "Deploying Lambda artifact..."
             cd ./.build/
-            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager --region us-east-1
+            aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager --region $AWS_DEFAULT_REGION_PROD
             echo "Lambda updated successfully to Production environment!"
       - persist_to_workspace:
           root: .
