@@ -126,6 +126,15 @@ jobs:
           root: .
           paths:
             - .
+  integration-test:
+    docker:
+      - image: ubuntu:20.04
+    steps:
+      - run:
+          name: unit-test
+          command: |        
+            sleep 30
+            echo "This will run an integration test..."
   approve-deploy-prod:
     docker:
       - image: ubuntu:20.04
