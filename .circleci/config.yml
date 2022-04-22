@@ -198,6 +198,7 @@ workflows:
           type: approval
           requires:
             - deploy-dev
+            - unit-test
       - deploy-test:
           requires:
             - approve-deploy-test
