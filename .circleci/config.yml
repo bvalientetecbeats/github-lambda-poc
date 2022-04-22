@@ -72,17 +72,11 @@ jobs:
     docker:
       - image: ubuntu:20.04
     steps:
-      - attach_workspace:
-          at: .
       - run:
           name: unit-test
           command: |        
             sleep 30
             echo "This will run an unit test..."
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
   approve-deploy-test:
     docker:
       - image: ubuntu:20.04
