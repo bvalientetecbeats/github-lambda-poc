@@ -92,9 +92,12 @@ jobs:
             - .
 workflows:
   version: 2
-  plan_approve_apply:
+  deploy-infrastructure:
     jobs:
-      - plan-apply
+      - build
+      - plan-apply:
+          requires:
+            - build
       - approve-apply:
           type: approval
           requires:
