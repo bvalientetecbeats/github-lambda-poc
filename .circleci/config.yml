@@ -61,6 +61,7 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
+            VAR_LAMBDA_FUNCTION_NAME_DEV="Dev-ops-Lambda-1"
             cd ./.build/
             echo $VAR_LAMBDA_FUNCTION_NAME_DEV
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_DEV --zip-file fileb://lambda_artifact.zip --no-cli-pager
@@ -111,6 +112,7 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
+            VAR_LAMBDA_FUNCTION_NAME_TEST="Dev-ops-Lambda-1-test"
             cd ./.build/
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_TEST --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
@@ -159,6 +161,7 @@ jobs:
             rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
             aws s3 ls
             echo "Deploying Lambda artifact..."
+            VAR_LAMBDA_FUNCTION_NAME_PROD="lambdapoc"
             cd ./.build/
             aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager
             echo "Lambda updated successfully in Development environment!"
