@@ -131,7 +131,7 @@ jobs:
       - image: ubuntu:20.04
     steps:
       - run:
-          name: unit-test
+          name: integration-test
           command: |        
             sleep 30
             echo "This will run an integration test..."
@@ -206,10 +206,14 @@ workflows:
       - deploy-test:
           requires:
             - approve-deploy-test
+      - integration-test:
+          requires:
+            - approve-deploy-test
       - approve-deploy-prod:
           type: approval
           requires:
             - deploy-test
+            - integration-test
       - deploy-prod:
           requires:
             - approve-deploy-prod
