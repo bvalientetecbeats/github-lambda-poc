@@ -1,0 +1,13 @@
+jobs:
+  - name: job-concourse-poc
+    public: true
+    plan:
+      - task: concourse-poc
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: ubuntu:20.04}
+          run:
+            path: echo
+            args: [Hello POC!]
