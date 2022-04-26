@@ -5,15 +5,13 @@ resources:
     uri: git@github.com:bvalientetecbeats/github-lambda-poc.git
     branch: concourse
     private_key: ((github_private_key))
-
 - name: docker-image-ubuntu
   type: docker-image
   source:
     repository: ubuntu
     tag: 20.04
-
 jobs:
-  - name: job-concourse-poc
+  - name: build
     plan:
       - get: git-repo
         trigger: true
@@ -23,17 +21,77 @@ jobs:
           image_resource:
             type: docker-image
             source: {repository: ubuntu:20.04}
-
           outputs:
           - name: workspace
           inputs:
           - name: git-repo
-
           run:
             path: /bin/sh
             args:
             - -c
             - |
               output_dir=workspace
-              echo "Getting started..."
-            
+              echo "Starting build..."
+  - name: deploy-dev
+    plan:
+      - get: git-repo
+        trigger: true
+      - task: concourse-poc
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: ubuntu:20.04}
+          outputs:
+          - name: workspace
+          inputs:
+          - name: git-repo
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Starting deploy to dev..."
+  - name: deploy-test
+    plan:
+      - get: git-repo
+        trigger: true
+      - task: concourse-poc
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: ubuntu:20.04}
+          outputs:
+          - name: workspace
+          inputs:
+          - name: git-repo
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Starting deploy to test..."
+  - name: deploy-prod
+    plan:
+      - get: git-repo
+        trigger: true
+      - task: concourse-poc
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: ubuntu:20.04}
+          outputs:
+          - name: workspace
+          inputs:
+          - name: git-repo
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Starting deploy to prod..."
