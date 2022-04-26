@@ -19,7 +19,7 @@ jobs:
         config:
           platform: linux
           image_resource:
-            type: docker-image
+            type: docker-image-ubuntu
             source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
@@ -36,11 +36,12 @@ jobs:
     plan:
       - get: git-repo
         trigger: true
+        passed: [build]
       - task: concourse-poc
         config:
           platform: linux
           image_resource:
-            type: docker-image
+            type: docker-image-ubuntu
             source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
@@ -57,11 +58,12 @@ jobs:
     plan:
       - get: git-repo
         trigger: true
+        passed: [deploy-dev]
       - task: concourse-poc
         config:
           platform: linux
           image_resource:
-            type: docker-image
+            type: docker-image-ubuntu
             source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
@@ -78,11 +80,12 @@ jobs:
     plan:
       - get: git-repo
         trigger: true
+        passed: [deploy-test]
       - task: concourse-poc
         config:
           platform: linux
           image_resource:
-            type: docker-image
+            type: docker-image-ubuntu
             source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
