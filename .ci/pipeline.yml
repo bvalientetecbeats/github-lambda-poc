@@ -62,7 +62,7 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [deploy-dev, unit-test]
+        passed: [unit-test]
       - task: deploy-test
         image: docker-image-ubuntu
         config:
@@ -79,7 +79,7 @@ jobs:
   - name: integration-test
     plan:
       - get: docker-image-ubuntu
-        trigger: false
+        trigger: true
         passed: [deploy-test]
       - task: integration-test
         image: docker-image-ubuntu
@@ -98,7 +98,7 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [deploy-test, integration-test]
+        passed: [deploy-test]
       - task: deploy-prod
         image: docker-image-ubuntu
         config:
