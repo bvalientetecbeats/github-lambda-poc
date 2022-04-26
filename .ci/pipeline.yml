@@ -1,10 +1,4 @@
 resources:
-- name: git-repo
-  type: git
-  source:
-    uri: git@github.com:bvalientetecbeats/github-lambda-poc.git
-    branch: concourse
-    private_key: ((github_private_key))
 - name: docker-image-ubuntu
   type: docker-image
   source:
@@ -13,9 +7,8 @@ resources:
 jobs:
   - name: build
     plan:
-      - get: git-repo
-        trigger: true
       - get: docker-image-ubuntu
+        trigger: true
       - task: concourse-poc
         image: docker-image-ubuntu
         config:
@@ -33,10 +26,8 @@ jobs:
               echo "Starting build..."
   - name: deploy-dev
     plan:
-      - get: git-repo
-        trigger: true
-        passed: [build]
       - get: docker-image-ubuntu
+        trigger: true
         passed: [build]
       - task: concourse-poc
         image: docker-image-ubuntu
@@ -55,10 +46,8 @@ jobs:
               echo "Starting deploy to dev..."
   - name: deploy-test
     plan:
-      - get: git-repo
-        trigger: true
-        passed: [deploy-dev]
       - get: docker-image-ubuntu
+        trigger: true
         passed: [deploy-dev]
       - task: concourse-poc
         config:
@@ -77,10 +66,8 @@ jobs:
               echo "Starting deploy to test..."
   - name: deploy-prod
     plan:
-      - get: git-repo
-        trigger: true
-        passed: [deploy-test]
       - get: docker-image-ubuntu
+        trigger: true
         passed: [deploy-test]
       - task: concourse-poc
         config:
