@@ -15,8 +15,6 @@ jobs:
           platform: linux
           outputs:
           - name: workspace
-          inputs:
-          - name: git-repo
           run:
             path: /bin/sh
             args:
@@ -35,8 +33,6 @@ jobs:
           platform: linux
           outputs:
           - name: workspace
-          inputs:
-          - name: git-repo
           run:
             path: /bin/sh
             args:
@@ -55,8 +51,6 @@ jobs:
           image: docker-image-ubuntu
           outputs:
           - name: workspace
-          inputs:
-          - name: git-repo
           run:
             path: /bin/sh
             args:
@@ -75,8 +69,6 @@ jobs:
           image: docker-image-ubuntu
           outputs:
           - name: workspace
-          inputs:
-          - name: git-repo
           run:
             path: /bin/sh
             args:
