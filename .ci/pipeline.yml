@@ -9,7 +9,7 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
-      - task: concourse-poc
+      - task: build
         image: docker-image-ubuntu
         config:
           platform: linux
@@ -27,7 +27,7 @@ jobs:
       - get: docker-image-ubuntu
         trigger: true
         passed: [build]
-      - task: concourse-poc
+      - task: deploy-dev
         image: docker-image-ubuntu
         config:
           platform: linux
@@ -40,15 +40,33 @@ jobs:
             - |
               output_dir=workspace
               echo "Starting deploy to dev..."
-  - name: deploy-test
+  - name: unit-test
     plan:
       - get: docker-image-ubuntu
         trigger: true
         passed: [deploy-dev]
-      - task: concourse-poc
+      - task: unit-test
+        image: docker-image-ubuntu
         config:
           platform: linux
-          image: docker-image-ubuntu
+          outputs:
+          - name: workspace
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Running unit test..."
+  - name: deploy-test
+    plan:
+      - get: docker-image-ubuntu
+        trigger: false
+        passed: [deploy-dev, unit-test]
+      - task: deploy-test
+        image: docker-image-ubuntu
+        config:
+          platform: linux
           outputs:
           - name: workspace
           run:
@@ -58,15 +76,33 @@ jobs:
             - |
               output_dir=workspace
               echo "Starting deploy to test..."
+  - name: integration-test
+    plan:
+      - get: docker-image-ubuntu
+        trigger: false
+        passed: [deploy-test]
+      - task: integration-test
+        image: docker-image-ubuntu
+        config:
+          platform: linux
+          outputs:
+          - name: workspace
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Running integration test..."
   - name: deploy-prod
     plan:
       - get: docker-image-ubuntu
-        trigger: true
-        passed: [deploy-test]
-      - task: concourse-poc
+        trigger: false
+        passed: [deploy-test, integration-test]
+      - task: deploy-prod
+        image: docker-image-ubuntu
         config:
           platform: linux
-          image: docker-image-ubuntu
           outputs:
           - name: workspace
           run:
