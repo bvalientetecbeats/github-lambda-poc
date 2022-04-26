@@ -4,6 +4,13 @@ resources:
   source:
     repository: ubuntu
     tag: 20.04
+- name: git-repo
+  type: git
+  source:
+    uri: git@github.com:bvalientetecbeats/github-lambda-poc.git
+    branch: concourse
+    private_key: ((github_private_key))
+    access_token: ((github_access_token))
 jobs:
   - name: build
     plan:
@@ -15,13 +22,11 @@ jobs:
           platform: linux
           outputs:
           - name: workspace
+          inputs:
+          - name: scripts
           run:
             path: /bin/sh
-            args:
-            - -c
-            - |
-              output_dir=workspace
-              echo "Starting build..."
+            args: ["./scripts/build.sh"]
   - name: deploy-dev
     plan:
       - get: docker-image-ubuntu
