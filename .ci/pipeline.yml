@@ -44,7 +44,7 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
-        passed: [deploy-dev]
+        passed: [build]
       - task: unit-test
         image: docker-image-ubuntu
         config:
@@ -57,12 +57,13 @@ jobs:
             - -c
             - |
               output_dir=workspace
+              sleep 10
               echo "Running unit test..."
   - name: deploy-test
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [unit-test]
+        passed: [deploy-dev]
       - task: deploy-test
         image: docker-image-ubuntu
         config:
@@ -94,11 +95,29 @@ jobs:
             - |
               output_dir=workspace
               echo "Running integration test..."
+  - name: load-test
+    plan:
+      - get: docker-image-ubuntu
+        trigger: true
+        passed: [deploy-test]
+      - task: load-test
+        image: docker-image-ubuntu
+        config:
+          platform: linux
+          outputs:
+          - name: workspace
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              output_dir=workspace
+              echo "Running load test..."
   - name: deploy-prod
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [integration-test]
+        passed: [integration-test, load-test]
       - task: deploy-prod
         image: docker-image-ubuntu
         config:
