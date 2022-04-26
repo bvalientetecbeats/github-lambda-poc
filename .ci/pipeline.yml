@@ -31,9 +31,6 @@ jobs:
             - |
               output_dir=workspace
               echo "Starting build..."
-  - put: docker-image-ubuntu
-    params:
-      build: workspace
   - name: deploy-dev
     plan:
       - get: git-repo
