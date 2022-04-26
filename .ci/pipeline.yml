@@ -15,12 +15,11 @@ jobs:
     plan:
       - get: git-repo
         trigger: true
+      - get: docker-image-ubuntu
       - task: concourse-poc
+        image: docker-image-ubuntu
         config:
           platform: linux
-          image_resource:
-            type: docker-image-ubuntu
-            source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
           inputs:
@@ -32,17 +31,20 @@ jobs:
             - |
               output_dir=workspace
               echo "Starting build..."
+  - put: docker-image-ubuntu
+    params:
+      build: workspace
   - name: deploy-dev
     plan:
       - get: git-repo
         trigger: true
         passed: [build]
+      - get: docker-image-ubuntu
+        passed: [build]
       - task: concourse-poc
+        image: docker-image-ubuntu
         config:
           platform: linux
-          image_resource:
-            type: docker-image-ubuntu
-            source: {repository: ubuntu:20.04}
           outputs:
           - name: workspace
           inputs:
@@ -59,12 +61,12 @@ jobs:
       - get: git-repo
         trigger: true
         passed: [deploy-dev]
+      - get: docker-image-ubuntu
+        passed: [deploy-dev]
       - task: concourse-poc
         config:
           platform: linux
-          image_resource:
-            type: docker-image-ubuntu
-            source: {repository: ubuntu:20.04}
+          image: docker-image-ubuntu
           outputs:
           - name: workspace
           inputs:
@@ -81,12 +83,12 @@ jobs:
       - get: git-repo
         trigger: true
         passed: [deploy-test]
+      - get: docker-image-ubuntu
+        passed: [deploy-test]
       - task: concourse-poc
         config:
           platform: linux
-          image_resource:
-            type: docker-image-ubuntu
-            source: {repository: ubuntu:20.04}
+          image: docker-image-ubuntu
           outputs:
           - name: workspace
           inputs:
