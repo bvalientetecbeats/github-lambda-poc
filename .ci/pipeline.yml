@@ -98,7 +98,7 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [deploy-test]
+        passed: [integration-test]
       - task: deploy-prod
         image: docker-image-ubuntu
         config:
