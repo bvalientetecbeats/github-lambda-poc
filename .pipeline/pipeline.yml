@@ -87,7 +87,7 @@ jobs:
             - |
               output_dir=workspace
               sleep 10
-              echo "Running unit test..."
+              echo "Running unit test... "
 
   - name: deploy-test
     plan:
