@@ -25,7 +25,7 @@ jobs:
           - name: workspace
           run:
             path: /bin/sh
-            args: ["./scripts/build.sh"]
+            args: ls -lah && pwd
   - name: deploy-dev
     plan:
       - get: docker-image-ubuntu
