@@ -29,6 +29,8 @@ jobs:
               - "-c"
               - |
                 ls -lah && pwd
+                cd workspace
+                ls -lah && pwd
     serial: true
   - name: deploy-dev
     plan:
