@@ -54,6 +54,7 @@ jobs:
           params:
             s3_bucket_name: ((s3_bucket_name))
             AWS_REGION_DEV: ((AWS_REGION_DEV))
+            AWS_REGION_PROD: ((AWS_REGION_PROD))
             AWS_ACCESS_KEY_ID_DEV: ((AWS_ACCESS_KEY_ID_DEV))
             AWS_SECRET_ACCESS_KEY_DEV: ((AWS_SECRET_ACCESS_KEY_DEV))
             AWS_SESSION_TOKEN_DEV: ((AWS_SESSION_TOKEN_DEV))
