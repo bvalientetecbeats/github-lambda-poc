@@ -54,6 +54,7 @@ jobs:
             AWS_SECRET_ACCESS_KEY_DEV: ((AWS_SECRET_ACCESS_KEY_DEV))
             AWS_SESSION_TOKEN_DEV: ((AWS_SESSION_TOKEN_DEV))
             AWS_PAGER: ((AWS_PAGER))
+            VAR_LAMBDA_FUNCTION_NAME_DEV: ((VAR_LAMBDA_FUNCTION_NAME_DEV))
           run:
             path: /bin/sh
             args: ["git-repo/.pipeline/scripts/deploy_dev.sh"]
