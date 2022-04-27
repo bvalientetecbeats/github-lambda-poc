@@ -17,5 +17,6 @@ aws s3 ls
 echo "Deploying Lambda artifact..."
 cd ./git-repo/.build/
 aws s3 cp s3://$s3_bucket_name/lambda_artifact.zip lambda_artifact.zip --region $AWS_REGION_PROD
+ls -lah && pwd
 aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_DEV --zip-file fileb://lambda_artifact.zip --no-cli-pager
 echo "Lambda updated successfully to Development environment!"
