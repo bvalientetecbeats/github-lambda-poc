@@ -37,6 +37,10 @@ jobs:
     
   - name: deploy-dev
     plan:
+      - get: git-repo
+        trigger: true
+        passed: 
+          - build
       - get: docker-image-ubuntu
         trigger: true
       - task: deploy-dev
