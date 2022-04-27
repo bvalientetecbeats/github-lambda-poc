@@ -32,6 +32,7 @@ jobs:
                 cd workspace
                 ls -lah && pwd
     serial: true
+
   - name: deploy-dev
     plan:
       - get: docker-image-ubuntu
@@ -51,6 +52,7 @@ jobs:
               - |
                 output_dir=workspace
                 echo "Starting deploy to dev..."
+
     serial: true
   - name: unit-test
     plan:
