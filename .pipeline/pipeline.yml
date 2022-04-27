@@ -7,14 +7,15 @@ resources:
 - name: git-repo
   type: git
   source:
-    uri: git@github.com:bvalientetecbeats/github-lambda-poc.git
+    uri: https://github.com/bvalientetecbeats/github-lambda-poc.git
     branch: concourse
-    private_key: ((github_private_key))
     access_token: ((github_access_token))
 jobs:
   - name: build
     plan:
       - get: docker-image-ubuntu
+        trigger: true
+      - get: git-repo
         trigger: true
       - task: build
         image: docker-image-ubuntu
