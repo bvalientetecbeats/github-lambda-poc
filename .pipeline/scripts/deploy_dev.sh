@@ -8,14 +8,14 @@ unzip -qq awscliv2.zip
 ./aws/install
 aws --version
 rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
-echo "Setting up AWS credentials..."        
+echo "Getting Artifact..."        
 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
 aws configure set default.region $AWS_REGION_PROD
 cd ./git-repo/.build/
 aws s3 cp s3://$s3_bucket_name/lambda_artifact.zip lambda_artifact.zip --region $AWS_REGION_PROD
 ls -lah && pwd
-echo "Deploying Lambda artifact..."
+echo "Setting up AWS credentials..."
 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
 aws configure set aws_session_token $AWS_SESSION_TOKEN_DEV

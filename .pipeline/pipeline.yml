@@ -70,6 +70,8 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
+      - get: git-repo
+        trigger: true
         passed: 
           - build
       - task: unit-test
@@ -86,30 +88,47 @@ jobs:
               output_dir=workspace
               sleep 10
               echo "Running unit test..."
+
   - name: deploy-test
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [deploy-dev]
+      - get: git-repo
+        trigger: true
+        passed: 
+          - unit-test
       - task: deploy-test
         image: docker-image-ubuntu
         config:
           platform: linux
           outputs:
-          - name: workspace
+            - name: workspace
+          inputs:
+            - name: git-repo
+          params:
+            s3_bucket_name: ((s3_bucket_name))            
+            AWS_REGION_PROD: ((AWS_REGION_PROD))
+            AWS_ACCESS_KEY_ID_PROD: ((AWS_ACCESS_KEY_ID_PROD))
+            AWS_SECRET_ACCESS_KEY_PROD: ((AWS_SECRET_ACCESS_KEY_PROD))
+            AWS_REGION_TEST: ((AWS_REGION_TEST))
+            AWS_ACCESS_KEY_ID_TEST: ((AWS_ACCESS_KEY_ID_TEST))
+            AWS_SECRET_ACCESS_KEY_TEST: ((AWS_SECRET_ACCESS_KEY_TEST))
+            AWS_SESSION_TOKEN_TEST: ((AWS_SESSION_TOKEN_TEST))
+            AWS_PAGER: ((AWS_PAGER))
+            VAR_LAMBDA_FUNCTION_NAME_TEST: ((VAR_LAMBDA_FUNCTION_NAME_TEST))
           run:
             path: /bin/sh
-            args:
-            - -c
-            - |
-              output_dir=workspace
-              echo "Starting deploy to test..."
+            args: ["git-repo/.pipeline/scripts/deploy_test.sh"]
     serial: true
+
   - name: integration-test
     plan:
       - get: docker-image-ubuntu
+        trigger: false
+      - get: git-repo
         trigger: true
-        passed: [deploy-test]
+        passed:
+          - deploy-test
       - task: integration-test
         image: docker-image-ubuntu
         config:
@@ -123,11 +142,15 @@ jobs:
             - |
               output_dir=workspace
               echo "Running integration test..."
+
   - name: load-test
     plan:
       - get: docker-image-ubuntu
+        trigger: false
+      - get: git-repo
         trigger: true
-        passed: [deploy-test]
+        passed:
+          - deploy-test
       - task: load-test
         image: docker-image-ubuntu
         config:
@@ -141,21 +164,32 @@ jobs:
             - |
               output_dir=workspace
               echo "Running load test..."
+
   - name: deploy-prod
     plan:
       - get: docker-image-ubuntu
         trigger: false
-        passed: [integration-test, load-test]
+      - get: git-repo
+        trigger: true
+        passed: 
+          - integration-test
+          - load-test
       - task: deploy-prod
         image: docker-image-ubuntu
         config:
           platform: linux
           outputs:
-          - name: workspace
+            - name: workspace
+          inputs:
+            - name: git-repo
+          params:
+            s3_bucket_name: ((s3_bucket_name))            
+            AWS_REGION_PROD: ((AWS_REGION_PROD))
+            AWS_ACCESS_KEY_ID_PROD: ((AWS_ACCESS_KEY_ID_PROD))
+            AWS_SECRET_ACCESS_KEY_PROD: ((AWS_SECRET_ACCESS_KEY_PROD))
+            AWS_PAGER: ((AWS_PAGER))
+            VAR_LAMBDA_FUNCTION_NAME_PROD: ((VAR_LAMBDA_FUNCTION_NAME_TEST))
           run:
             path: /bin/sh
-            args:
-            - -c
-            - |
-              output_dir=workspace
-              echo "Starting deploy to prod..."
+            args: ["git-repo/.pipeline/scripts/deploy_prod.sh"]
+    serial: true
