@@ -23,12 +23,11 @@ jobs:
           platform: linux
           outputs:
             - name: workspace
+          inputs:
+            - name: git-repo
           run:
             path: /bin/bash
-            args:
-              - "-c"
-              - |
-                ls -lah && pwd
+            args: ["git-repo/.pipeline/scripts/build.sh"]
     
   - name: deploy-dev
     plan:
