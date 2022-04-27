@@ -29,7 +29,7 @@ jobs:
               - "-c"
               - |
                 ls -lah && pwd
-                cd workspace
+                cd /tmp/build/get
                 ls -lah && pwd
     serial: true
 
