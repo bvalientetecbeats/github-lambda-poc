@@ -31,8 +31,6 @@ jobs:
                 ls -lah && pwd
                 cd /tmp/build
                 ls -lah && pwd
-        on_success:
-          task: deploy-dev
     
   - name: deploy-dev
     plan:
