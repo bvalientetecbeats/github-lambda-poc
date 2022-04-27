@@ -50,7 +50,6 @@ jobs:
                 output_dir=workspace
                 echo "Starting deploy to dev..."
 
-    serial: true
   - name: unit-test
     plan:
       - get: docker-image-ubuntu

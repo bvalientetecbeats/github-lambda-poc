@@ -11,8 +11,8 @@ unzip -qq awscliv2.zip
 ./aws/install
 aws --version
 echo "Setting up AWS credentials..."        
-aws configure set aws_access_key_id ((AWS_ACCESS_KEY_ID_PROD))
-aws configure set aws_secret_access_key ((AWS_SECRET_ACCESS_KEY_PROD))
-aws configure set default.region ((AWS_DEFAULT_REGION_PROD))
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+aws configure set default.region $AWS_DEFAULT_REGION_PROD
 echo "Uploading Lambda Artifact to S3..."
-cp lambda_artifact.zip s3://((s3_bucket_name))/lambda_artifact.zip
+cp lambda_artifact.zip s3://$s3_bucket_name/lambda_artifact.zip
