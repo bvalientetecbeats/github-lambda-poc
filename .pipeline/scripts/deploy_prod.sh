@@ -9,11 +9,14 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip -qq awscliv2.zip
 ./aws/install
 aws --version
-echo "Setting up AWS credentials..."        
-aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
-aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
-aws configure set default.region $AWS_DEFAULT_REGION_PROD
 rm -rf awscliv2.zip terraform_1.1.8_linux_amd64.zip aws
+echo "Setting up AWS credentials..."    
+echo "Configuring AWS-ACCESS-KEY-ID..."
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+echo "Configuring AWS-SECRET-ACCESS-KEY..."
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+echo "Configuring AWS-DEFAULT-REGION-PROD..."
+aws configure set default.region $AWS_DEFAULT_REGION_PROD
 aws s3 ls
 echo "Deploying Lambda artifact..."
 cd ./.build/

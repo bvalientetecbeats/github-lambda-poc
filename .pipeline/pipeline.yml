@@ -70,8 +70,6 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
-      - get: git-repo
-        trigger: true
         passed: 
           - build
       - task: unit-test
