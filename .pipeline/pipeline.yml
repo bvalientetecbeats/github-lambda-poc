@@ -94,9 +94,9 @@ jobs:
       - get: docker-image-ubuntu
         trigger: false
       - get: git-repo
-        trigger: true
+        trigger: false
         passed: 
-          - unit-test
+          - deploy-dev
       - task: deploy-test
         image: docker-image-ubuntu
         config:
@@ -170,7 +170,7 @@ jobs:
       - get: docker-image-ubuntu
         trigger: false
       - get: git-repo
-        trigger: true
+        trigger: false
         passed: 
           - integration-test
           - load-test
