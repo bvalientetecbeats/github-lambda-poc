@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Updating Lambda function..."
 echo "Installing dependencies..."
-apt -qq update -y && apt -qq install -y curl unzip wget tar gzip
+apt -qq update -y && apt -qq install -y unzip
 echo "Configuring AWS CLI..."
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip -qq awscliv2.zip
