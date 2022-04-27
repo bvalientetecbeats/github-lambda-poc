@@ -22,31 +22,34 @@ jobs:
         config:
           platform: linux
           outputs:
-          - name: workspace
+            - name: workspace
           run:
-            path: sh
+            path: /bin/bash
             args:
-            - "-c"
-            - |
-              ls -lah && pwd
+              - "-c"
+              - |
+                ls -lah && pwd
+    serial: true
   - name: deploy-dev
     plan:
       - get: docker-image-ubuntu
         trigger: true
-        passed: [build]
+        passed:
+          - build
       - task: deploy-dev
         image: docker-image-ubuntu
         config:
           platform: linux
           outputs:
-          - name: workspace
+            - name: workspace
           run:
             path: /bin/sh
             args:
-            - -c
-            - |
-              output_dir=workspace
-              echo "Starting deploy to dev..."
+              - -c
+              - |
+                output_dir=workspace
+                echo "Starting deploy to dev..."
+    serial: true
   - name: unit-test
     plan:
       - get: docker-image-ubuntu
@@ -84,6 +87,7 @@ jobs:
             - |
               output_dir=workspace
               echo "Starting deploy to test..."
+    serial: true
   - name: integration-test
     plan:
       - get: docker-image-ubuntu
