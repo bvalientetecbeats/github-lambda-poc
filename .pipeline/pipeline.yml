@@ -186,7 +186,7 @@ jobs:
             AWS_ACCESS_KEY_ID_PROD: ((AWS_ACCESS_KEY_ID_PROD))
             AWS_SECRET_ACCESS_KEY_PROD: ((AWS_SECRET_ACCESS_KEY_PROD))
             AWS_PAGER: ((AWS_PAGER))
-            VAR_LAMBDA_FUNCTION_NAME_PROD: ((VAR_LAMBDA_FUNCTION_NAME_TEST))
+            VAR_LAMBDA_FUNCTION_NAME_PROD: ((VAR_LAMBDA_FUNCTION_NAME_PROD))
           run:
             path: /bin/sh
             args: ["git-repo/.pipeline/scripts/deploy_prod.sh"]
