@@ -39,21 +39,24 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
-        passed:
-          - build
       - task: deploy-dev
         image: docker-image-ubuntu
         config:
           platform: linux
           outputs:
             - name: workspace
+          inputs:
+            - name: git-repo
+          params:
+            s3_bucket_name: ((s3_bucket_name))
+            AWS_REGION_DEV: ((AWS_REGION_DEV))
+            AWS_ACCESS_KEY_ID_DEV: ((AWS_ACCESS_KEY_ID_DEV))
+            AWS_SECRET_ACCESS_KEY_DEV: ((AWS_SECRET_ACCESS_KEY_DEV))
+            AWS_SESSION_TOKEN_DEV: ((AWS_SESSION_TOKEN_DEV))
+            AWS_PAGER: ((AWS_PAGER))
           run:
             path: /bin/sh
-            args:
-              - -c
-              - |
-                output_dir=workspace
-                echo "Starting deploy to dev..."
+            args: ["git-repo/.pipeline/scripts/deploy_dev.sh"]
 
   - name: unit-test
     plan:
