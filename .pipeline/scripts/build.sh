@@ -11,7 +11,7 @@ unzip -qq awscliv2.zip
 ./aws/install
 aws --version
 echo "Setting up AWS credentials..."
-echo $AWS_DEFAULT_REGION_PROD
+env
 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
 aws configure set default.region $AWS_DEFAULT_REGION_PROD

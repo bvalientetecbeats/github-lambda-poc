@@ -26,6 +26,11 @@ jobs:
             - name: workspace
           inputs:
             - name: git-repo
+          params:
+            s3_bucket_name: ((s3_bucket_name))
+            AWS_REGION_PROD: ((AWS_REGION_PROD))
+            AWS_ACCESS_KEY_ID_PROD: ((AWS_ACCESS_KEY_ID_PROD))
+            AWS_SECRET_ACCESS_KEY_PROD: ((AWS_SECRET_ACCESS_KEY_PROD))
           run:
             path: /bin/bash
             args: ["git-repo/.pipeline/scripts/build.sh"]
