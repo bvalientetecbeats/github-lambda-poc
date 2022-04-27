@@ -68,7 +68,8 @@ jobs:
     plan:
       - get: docker-image-ubuntu
         trigger: true
-        passed: [build]
+        passed: 
+          - build
       - task: unit-test
         image: docker-image-ubuntu
         config:
