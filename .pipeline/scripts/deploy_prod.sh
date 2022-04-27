@@ -16,9 +16,9 @@ aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
 echo "Configuring AWS-SECRET-ACCESS-KEY..."
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
 echo "Configuring AWS-DEFAULT-REGION-PROD..."
-aws configure set default.region $AWS_DEFAULT_REGION_PROD
+aws configure set default.region $AWS_REGION_PROD
 aws s3 ls
 echo "Deploying Lambda artifact..."
-cd ./.build/
-aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager --region $AWS_DEFAULT_REGION_PROD
+cd ./git-repo/.build/
+aws lambda update-function-code --function-name $VAR_LAMBDA_FUNCTION_NAME_PROD --zip-file fileb://lambda_artifact.zip --no-cli-pager --region $AWS_REGION_PROD
 echo "Lambda updated successfully to Production environment!"
