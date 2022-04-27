@@ -29,8 +29,6 @@ jobs:
               - "-c"
               - |
                 ls -lah && pwd
-                cd /tmp/build
-                ls -lah && pwd
     
   - name: deploy-dev
     plan:
