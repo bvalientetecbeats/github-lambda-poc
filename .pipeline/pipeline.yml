@@ -10,6 +10,7 @@ resources:
     uri: ((github_uri))
     branch: ((github_branch))
     access_token: ((github_access_token))
+
 jobs:
   - name: build
     plan:
