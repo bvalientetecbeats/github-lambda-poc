@@ -13,7 +13,7 @@ aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
 aws configure set default.region $AWS_REGION_PROD
 cd ./git-repo/.build/
-aws s3 cp s3://$s3_bucket_name/lambda_artifact.zip ./git-repo/.build/lambda_artifact.zip --region $AWS_REGION_PROD
+aws s3 cp s3://$s3_bucket_name/lambda_artifact.zip lambda_artifact.zip --region $AWS_REGION_PROD
 ls -lah && pwd
 echo "Deploying Lambda artifact..."
 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
