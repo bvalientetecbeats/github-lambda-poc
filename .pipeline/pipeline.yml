@@ -7,8 +7,8 @@ resources:
 - name: git-repo
   type: git
   source:
-    uri: https://github.com/bvalientetecbeats/github-lambda-poc.git
-    branch: concourse
+    uri: ((github_uri))
+    branch: ((github_branch))
     access_token: ((github_access_token))
 jobs:
   - name: build
