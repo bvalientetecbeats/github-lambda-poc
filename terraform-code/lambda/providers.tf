@@ -1,3 +1,7 @@
+provider "aws" {
+  region = local.aws_region
+}
+
 terraform {
   backend "s3" {
     bucket         = "devops-terraform-state-poc-levelgoals"
