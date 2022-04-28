@@ -32,18 +32,16 @@ jobs:
           command: |
             echo "Starting Terraform init and plan..."
             echo "Installing dependencies..."
-            apt update -y 
-            apt install -y curl unzip wget > /dev/null
+            apt -qq update -y > /dev/null && apt -qq install -y curl unzip wget > /dev/null
             wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
             unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
             rm -rf terraform_1.1.8_linux_amd64.zip terraform
             echo "Getting artifact..."
-            cd ./terraform-code/
+            cd ./terraform-code/api-gateway/
             echo "Starting terraform init..."
-            terraform --version
-            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY"
+            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID_PROD" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
             echo "Starting terraform plan..."
-            terraform plan -out tfapply -var-file variables.tf
+            terraform plan -out tfapply -var="$TFVAR_api_gtw_restapi_poc"
       - persist_to_workspace:
           root: .
           paths:
