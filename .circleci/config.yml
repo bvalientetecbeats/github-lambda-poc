@@ -41,7 +41,7 @@ jobs:
             echo "Starting terraform init..."
             terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID_PROD" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
             echo "Starting terraform plan..."
-            terraform plan -out tfapply -var="api_gtw_restapi_name_dev=$TFVAR_api_gtw_restapi_name_dev" -var="access_key=$AWS_ACCESS_KEY_ID_PROD" -var="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
+            terraform plan -out tfapply -var="api_gtw_restapi_name_dev=$TFVAR_api_gtw_restapi_name_dev"
       - persist_to_workspace:
           root: .
           paths:

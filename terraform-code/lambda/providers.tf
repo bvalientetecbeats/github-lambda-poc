@@ -1,8 +1,4 @@
-provider "aws" {
-  region = local.aws_region
-}
-
-terraform {
+terraform {  
   backend "s3" {
     bucket         = "devops-terraform-state-poc-levelgoals"
     key            = "global/lambda/terraform.tfstate"
@@ -10,4 +6,8 @@ terraform {
     dynamodb_table = "devops-terraform-state"
     encrypt        = false
   }
+}
+
+provider "aws" {
+  region = local.aws_region
 }
