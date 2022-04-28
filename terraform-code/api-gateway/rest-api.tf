@@ -43,7 +43,4 @@ resource "aws_api_gateway_stage" "stage_default" {
   rest_api_id   = aws_api_gateway_rest_api.api_gtw_restapi_poc.id
   stage_name    = local.stage_name
 
-  settings {
-    metrics_enabled = true
-  }
 }
