@@ -101,10 +101,7 @@ workflows:
   version: 2
   deploy-infrastructure:
     jobs:
-      - build
-      - plan-apply:
-          requires:
-            - build
+      - plan-apply
       - approve-apply:
           type: approval
           requires:
