@@ -51,7 +51,7 @@ jobs:
             cd ./terraform-code/sqs
             terraform init
             echo "Starting terraform api-gateway plan..."
-            terraform plan -out tfapply -var="api_gtw_restapi_name_dev=$TFVAR_api_gtw_restapi_name_dev"
+            terraform plan -out tfapply
       - persist_to_workspace:
           root: .
           paths:
