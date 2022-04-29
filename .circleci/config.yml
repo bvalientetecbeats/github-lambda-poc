@@ -45,10 +45,9 @@ jobs:
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
             aws configure set default.region $AWS_DEFAULT_REGION
-            ls -lah && pwd
             rm -rf terraform_1.1.9_linux_amd64.zip terraform awscliv2.zip aws
-            ls -lah && pwd
             echo "Starting terraform init..."
+            cd ./terraform-code/api-gateway
             terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID_PROD" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var="api_gtw_restapi_name_dev=$TFVAR_api_gtw_restapi_name_dev"
