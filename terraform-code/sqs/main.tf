@@ -23,6 +23,6 @@ resource "aws_sqs_queue" "argyle_dlq" {
 }
 
 resource "aws_lambda_event_source_mapping" "argyle_lambda" {
-  event_source_arn = aws_sqs_queue.name.arn
-  function_name    = data.terraform_remote_state.lambda.outputs.aws_lambda_function.lambda.qualified_arn
+  event_source_arn = aws_sqs_queue.sq_name.arn
+  function_name    = data.terraform_remote_state.lambda.outputs.aws_lambda_function.qualified_arn
 }
