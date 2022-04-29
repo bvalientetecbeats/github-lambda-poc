@@ -14,7 +14,6 @@ jobs:
             apt update -y && apt install -y zip > /dev/null
             echo "Zipping deployment package..."
             cd ./.build/
-            git clone git@github.com:levelgoals/argyle-webhooks-authorizer.git
             zip lambda_artifact.zip lambda_function.py
             cp lambda_artifact.zip ../terraform-code/
             rm -rf ./.build/*
@@ -101,7 +100,10 @@ workflows:
   version: 2
   deploy-infrastructure:
     jobs:
-      - plan-apply
+      - build
+      - plan-apply:
+          requires:
+            - build
       - approve-apply:
           type: approval
           requires:
