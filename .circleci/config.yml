@@ -49,11 +49,10 @@ jobs:
             aws configure set default.region $AWS_DEFAULT_REGION
             rm -rf terraform_1.1.9_linux_amd64.zip terraform awscliv2.zip aws
             echo "Starting terraform init..."
-            cd ./terraform-code/api-gateway
-            terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID_PROD" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
+            cd ./terraform-code/sqs
+            terraform init
             echo "Starting terraform api-gateway plan..."
             terraform plan -out tfapply -var="api_gtw_restapi_name_dev=$TFVAR_api_gtw_restapi_name_dev"
-            
       - persist_to_workspace:
           root: .
           paths:
