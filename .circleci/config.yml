@@ -30,14 +30,22 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            echo "Starting Terraform init and plan..."
+            echo "Starting terraform init and plan..."
             echo "Installing dependencies..."
             apt -qq update -y > /dev/null && apt -qq install -y curl unzip wget > /dev/null
-            wget https://releases.hashicorp.com/terraform/1.1.8/terraform_1.1.8_linux_amd64.zip
-            unzip -qq terraform_1.1.8_linux_amd64.zip && mv terraform /usr/local/bin/
-            rm -rf terraform_1.1.8_linux_amd64.zip terraform
-            echo "Getting artifact..."
-            cd ./terraform-code/api-gateway/
+            echo "Configuring terraform 1.1.9..."
+            wget https://releases.hashicorp.com/terraform/1.1.9/terraform_1.1.9_linux_amd64.zip
+            unzip -qq terraform_1.1.9_linux_amd64.zip && mv terraform /usr/local/bin/
+            echo "Configuring AWS CLI..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -qq awscliv2.zip
+            ./aws/install
+            aws --version
+            echo "Setting up AWS credentials..."        
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
+            aws configure set default.region $AWS_DEFAULT_REGION
+            rm -rf terraform_1.1.9_linux_amd64.zip terraform awscliv2.zip aws
             echo "Starting terraform init..."
             terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID_PROD" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY_PROD"
             echo "Starting terraform plan..."
