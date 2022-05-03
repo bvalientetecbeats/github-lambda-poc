@@ -10,10 +10,12 @@ jobs:
           name: build lambda
           command: |
             echo "Getting started with AWS Lambda build..."
+            echo "Setting up environment..."
+            TFVAR_environment='env-dev'
             echo "Zipping deployment package..."
             apt -qq install -y zip > /dev/null 2>&1
             cd ./.build/
-            zip lambda_artifact.zip lambda_function.js && mv lambda_artifact.zip ../terraform-code/modules/lambda
+            zip lambda_artifact.zip lambda_function.js && mv lambda_artifact.zip ../terraform-code/$TFVAR_environment
             ls -lah ../terraform-code/modules/lambda
             ls -lah ../terraform-code/modules
             echo "Cloning repository..."
