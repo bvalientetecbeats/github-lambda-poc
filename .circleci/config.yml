@@ -13,6 +13,7 @@ jobs:
             echo "Zipping deployment package..."
             apt -qq install -y zip > /dev/null 2>&1
             cd ./.build/
+            ls -lah && pwd
             zip lambda_artifact.zip lambda_function.py
             echo "Cloning repository..."
             git clone https://$VAR_GITHUB_TOKEN:x-oauth-basic@github.com/levelgoals/argyle-webhooks-authorizer.git
