@@ -6,8 +6,8 @@ variable "environment" {
   description = "The environment"
 }
 
-variable "tag_owner" {
-  description = "The owner of the application applied to the tag"
+variable "owner" {
+  description = "The owner of the lambda function"
 }
 
 variable "lambda_function_name" {

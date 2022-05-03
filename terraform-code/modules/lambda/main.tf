@@ -24,7 +24,7 @@ resource "aws_lambda_function" "lambda" {
 
   environment {
     variables = {
-      test = var.tag_owner
+      test = var.owner
     }
   }
 }
