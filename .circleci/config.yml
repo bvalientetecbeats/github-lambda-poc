@@ -16,8 +16,6 @@ jobs:
             apt -qq install -y zip > /dev/null 2>&1
             cd ./.build/
             zip lambda_artifact.zip lambda_function.js && mv lambda_artifact.zip ../terraform-code/$TFVAR_environment
-            ls -lah ../terraform-code/modules/lambda
-            ls -lah ../terraform-code/modules
             echo "Cloning repository..."
             git clone https://$VAR_GITHUB_TOKEN:x-oauth-basic@github.com/levelgoals/argyle-webhooks-authorizer.git
             cd argyle-webhooks-authorizer/
@@ -70,7 +68,7 @@ jobs:
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var="environment=$TFVAR_environment"
             echo "Starting terraform apply..."
-            terraform apply -auto-approve tfapply -var="environment=$TFVAR_environment"
+            terraform apply -auto-approve tfapply
       - persist_to_workspace:
           root: .
           paths:
