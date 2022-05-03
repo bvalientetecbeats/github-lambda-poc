@@ -6,7 +6,7 @@ variable "environment" {
   description = "The environment"
 }
 
-variable "owner" {
+variable "tag_owner" {
   description = "The owner of the application applied to the tag"
 }
 
