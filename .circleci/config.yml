@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: benjaminvaliente/cicdtools:latest
     steps:
+      - checkout
       - run:
           name: build lambda
           command: |
@@ -30,7 +31,7 @@ jobs:
       - run:
           name: unit-test
           command: |        
-            sleep 10
+            sleep 5
             echo "This will run an unit test..."
       - persist_to_workspace:
           root: .
@@ -43,7 +44,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - checkout
       - run:
           name: terraform deployment
           command: |            
