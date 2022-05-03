@@ -50,6 +50,7 @@ jobs:
           command: |            
             echo "Setting up environment..."
             TFVAR_environment='env-dev'
+            TFVAR_aws_region='us-east-1'
             echo "Setting up AWS credentials..."    
             AWS_PAGER=''
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
@@ -63,7 +64,7 @@ jobs:
             echo "Starting terraform plan..."
             terraform plan -out tfapply -var="environment=$TFVAR_environment"
             echo "Starting terraform apply..."
-            terraform apply -auto-approve tfapply -var="environment=$TFVAR_environment" -var="aws_region=$AWS_DEFAULT_REGION"
+            terraform apply -auto-approve tfapply -var="environment=$TFVAR_environment" -var="aws_region=$TFVAR_aws_region"
       - persist_to_workspace:
           root: .
           paths:
