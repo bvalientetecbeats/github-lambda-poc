@@ -5,13 +5,11 @@ jobs:
     docker:
       - image: benjaminvaliente/cicdtools:latest
     steps:
-      - checkout
       - run:
           name: build lambda
           command: |
             echo "Getting started with AWS Lambda build..."
-            echo "Cloning repository..."            
-            cd ./.build/
+            echo "Cloning repository..."
             git clone https://$VAR_GITHUB_TOKEN:x-oauth-basic@github.com/levelgoals/argyle-webhooks-authorizer.git
             cd argyle-webhooks-authorizer/
             ls -lah && pwd
@@ -45,6 +43,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - checkout
       - run:
           name: terraform deployment
           command: |            
