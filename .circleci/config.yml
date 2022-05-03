@@ -11,10 +11,8 @@ jobs:
           command: |
             echo "Getting started with AWS Lambda build..."
             echo "Cloning repository..."
-            cd ./.build/
+            cd ./.build/argyle-webhooks-authorizer/
             # git clone https://$VAR_GITHUB_TOKEN:x-oauth-basic@github.com/levelgoals/argyle-webhooks-authorizer.git
-            ls -lah && pwd
-            cd argyle-webhooks-authorizer/
             ls -lah && pwd
             echo "Building Lambda function..."
             npm ci
