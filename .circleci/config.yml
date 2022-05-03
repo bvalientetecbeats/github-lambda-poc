@@ -11,6 +11,7 @@ jobs:
           command: |
             echo "Getting started with AWS Lambda build..."
             echo "Zipping deployment package..."
+            apt -qq install -y zip > /dev/null 2>&1
             cd ./.build/
             zip lambda_artifact.zip lambda_function.py
             echo "Cloning repository..."
