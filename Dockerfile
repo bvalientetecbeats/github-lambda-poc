@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM gradle:latest
 
-WORKDIR /home/ubuntu
+WORKDIR /home/gradle
 
-COPY install.sh /home/ubuntu/
+COPY install.sh /home/gradle/
 RUN ./install.sh
