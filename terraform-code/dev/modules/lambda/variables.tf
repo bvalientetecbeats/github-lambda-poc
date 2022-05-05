@@ -7,7 +7,7 @@ variable "environment" {
 }
 
 variable "owner" {
-  description = "The owner of the lambda function"
+  description = "The owner of the Lambda function"
 }
 
 variable "lambda_function_name" {

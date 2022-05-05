@@ -22,7 +22,7 @@ resource "aws_sqs_queue" "sqs_dlq" {
   name = var.sqs_dlq_name
 }
 
-resource "aws_lambda_event_source_mapping" "sqs_lambda" {
-  event_source_arn = aws_sqs_queue.sqs_queue.arn
-  function_name    = var.lambda_arn
-}
+#resource "aws_lambda_event_source_mapping" "sqs_lambda" {
+#  event_source_arn = aws_sqs_queue.sqs_queue.arn
+#  function_name    = var.lambda_arn
+#}

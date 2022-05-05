@@ -26,3 +26,7 @@ variable "rest_api_name" {
 variable "stage_name" {
   description = "The API Gateway stage name"
 }
+
+variable "lambda_arn_action" {
+  description = "The Lambda ARN"
+}
