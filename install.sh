@@ -4,16 +4,17 @@ ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 echo "Installing dependencies..."
 DEBIAN_FRONTEND=noninteractive
 GRADLE_VERSION=6.5.1
-apt-get -qq update -y > /dev/null 2>&1 && apt-get install -y unzip wget zip git-all curl openjdk-11-jdk > /dev/null 2>&1
-echo "Installing Gradle ${GRADLE_VERSION}..."
+GRADLE_HOME_VAR=/opt/gradle/latest
+apt-get -qq update -y && apt-get install -y unzip wget zip git-all curl openjdk-11-jdk
+echo "Installing Gradle..."
 wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
-unzip -d /opt/gradle /tmp/gradle-${VERSION}-bin.zip
+unzip -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
 echo "Setting up Gradle environment..."
-sudo ln -s /opt/gradle/gradle-${VERSION} /opt/gradle/latest
+ln -s /opt/gradle/gradle-${GRADLE_VERSION} /opt/gradle/latest
 echo "export GRADLE_HOME=/opt/gradle/latest" >> /etc/profile.d/gradle.sh
-echo "export PATH=${GRADLE_HOME}/bin:${PATH}" >> /etc/profile.d/gradle.sh
+echo "export PATH=${GRADLE_HOME_VAR}/bin:${PATH}" >> /etc/profile.d/gradle.sh
 chmod +x /etc/profile.d/gradle.sh
-source /etc/profile.d/gradle.sh
+. /etc/profile.d/gradle.sh
 echo "Configuring terraform 1.1.9..."
 wget https://releases.hashicorp.com/terraform/1.1.9/terraform_1.1.9_linux_amd64.zip
 unzip -qq terraform_1.1.9_linux_amd64.zip && mv terraform /usr/local/bin/
