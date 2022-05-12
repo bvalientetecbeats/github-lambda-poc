@@ -1,93 +1,242 @@
 version: 2
 jobs:
-  build-lambda:
+  build-python:
     working_directory: /tmp/project/
     docker:
-      - image: ubuntu:20.04
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
       - checkout
       - run:
-          name: build lambda
+          name: lambda-build
           command: |
-            echo "Getting started with AWS Lambda build..."
-            echo "Setting up environment..."
-            TFVAR_environment='env-dev'
-            cd ./.build/
-            echo "Building Lambda function..."
-            sam build --use-container
+            set -e
+            echo "Getting started with Python build..."
+            echo "Setting up environment dependencies..."
+            TFVAR_environment='dev'            
+            echo "Installing Python requirements..." 
+            apt-get install -y python3-pip
+            pip install -r ./.build/tests/requirements.txt --user
+            echo "Installing Gradle..."
+            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+            echo "Setting up Gradle environment..."
+            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
+            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
+            chmod +x /etc/profile.d/gradle.sh
+            . /etc/profile.d/gradle.sh
+            gradle -v
+            echo "Setting up AWS credentials..."
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Starting Kotlin project build"
+            cd ./.build
+            ls -lah && pwd
+            sam build
       - persist_to_workspace:
           root: .
           paths:
             - .
   unit-test:
+    working_directory: /tmp/project/
     docker:
-      - image: ubuntu:20.04
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
       - attach_workspace:
           at: .
       - run:
           name: unit-test
-          command: |        
-            sleep 5
-            echo "This will run an unit test..."
+          command: |
+            set -e   
+            echo "Getting started with Unit Test..."
+            echo "Setting up environment dependencies..."
+            TFVAR_environment='dev'
+            echo "Installing Python requirements..."
+            apt-get install -y python3-pip            
+            pip install -r ./.build/tests/requirements.txt --user
+            echo "Installing Gradle..."
+            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+            echo "Setting up Gradle environment..."
+            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
+            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
+            chmod +x /etc/profile.d/gradle.sh
+            . /etc/profile.d/gradle.sh
+            gradle -v
+            echo "Setting up AWS credentials..."
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Starting Unit Test..."
+            cd ./.build
+            python3 -m pytest tests/unit -v
       - persist_to_workspace:
           root: .
           paths:
             - .
-  deploy-infra-dev:    
+  deploy-python-dev:  
     working_directory: /tmp/project/
     docker:
-      - image: ubuntu:20.04
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: terraform deployment
-          command: |            
-            echo "Setting up environment..."
-            TFVAR_environment='env-dev'
-            echo "Setting up AWS credentials..."    
-            AWS_PAGER=''
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_PROD
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_PROD
-            aws configure set default.region $AWS_DEFAULT_REGION
-            aws sts get-caller-identity --no-cli-pager
-            aws s3 ls --no-cli-pager
-            echo "Starting terraform init..."
-            cd ./terraform-code/$TFVAR_environment
-            terraform init
-            echo "Starting terraform plan..."
-            terraform plan -out tfapply -var="environment=$TFVAR_environment"
-            echo "Starting terraform apply..."
-            terraform apply -auto-approve tfapply
+          name: lambda-deployment
+          command: |
+            set -e  
+            echo "Running deployment to dev environment..."
       - persist_to_workspace:
           root: .
           paths:
             - .
-  deploy-lambda-dev:
+  deploy-python-test:  
     working_directory: /tmp/project/
     docker:
-      - image: ubuntu:20.04
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
+      - attach_workspace:
+          at: .
       - run:
-          name: build lambda
+          name: lambda-deployment
           command: |
+            set -e  
             echo "Getting started with AWS Lambda deploy..."
-            echo "Cloning repository..."
-            cd ./.build/argyle-webhooks-authorizer/
-            echo "Deploying Lambda function..."
-            echo "Doing SAM deploy..."
+            echo "Setting up environment dependencies..."
+            TFVAR_environment='dev'
+            echo "Installing Gradle..."
+            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+            echo "Setting up Gradle environment..."
+            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
+            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
+            chmod +x /etc/profile.d/gradle.sh
+            . /etc/profile.d/gradle.sh
+            gradle -v
+            echo "Setting up AWS credentials..."    
+            AWS_PAGER=''
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Deploying Lambda function with AWS SAM..."            
+            cd ./.build
+            sam deploy --config-env $TFVAR_environment --no-fail-on-empty-changeset
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  integration-test:
+    working_directory: /tmp/project/
+    docker:
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: integration-test
+          command: |
+            set -e   
+            echo "Getting started with Integration Test..."
+            echo "Setting up environment dependencies..."
+            TFVAR_environment='dev'
+            echo "Installing Python requirements..."
+            apt-get install -y python3-pip            
+            pip install -r ./.build/tests/requirements.txt --user
+            echo "Installing Gradle..."
+            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+            echo "Setting up Gradle environment..."
+            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
+            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
+            chmod +x /etc/profile.d/gradle.sh
+            . /etc/profile.d/gradle.sh
+            gradle -v
+            echo "Setting up AWS credentials..."
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Starting Integration Test..."
+            cd ./.build
+            AWS_SAM_STACK_NAME=dev-python-app python3 -m pytest tests/integration -v
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy-python-prod:  
+    working_directory: /tmp/project/
+    docker:
+      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: lambda-deployment
+          command: |
+            set -e  
+            echo "Getting started with AWS Lambda deploy..."
+            echo "Setting up environment dependencies..."
+            TFVAR_environment='qa'
+            echo "Installing Gradle..."
+            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+            echo "Setting up Gradle environment..."
+            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
+            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
+            chmod +x /etc/profile.d/gradle.sh
+            . /etc/profile.d/gradle.sh
+            gradle -v
+            echo "Setting up AWS credentials..."    
+            AWS_PAGER=''
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_TEST
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_TEST
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Deploying Lambda function with AWS SAM..."            
+            cd ./.build
+            sam deploy --config-env $TFVAR_environment --no-fail-on-empty-changeset
 workflows:
   version: 2
-  deploy-infrastructure:
+  deploy-python:
     jobs:
-      - build-lambda
+      - build-python
       - unit-test:
           requires:
-            - build-lambda
-      - deploy-infra-dev:      
+            - build-python
+      - deploy-python-dev:
           requires:
             - unit-test
-      - deploy-lambda-dev:
+      - deploy-python-test:
           requires:
-            - deploy-infra-dev
+            - deploy-python-dev
+      - integration-test:
+          requires:
+            - deploy-python-test
+      - approve-deploy-prod:
+          type: approval
+          requires:
+            - integration-test
+      - deploy-python-prod:
+          requires:
+            - approve-deploy-prod
