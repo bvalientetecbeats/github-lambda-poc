@@ -1,7 +1,6 @@
 version = 0.1
-[default]
-[default.deploy]
-[default.deploy.parameters]
+
+[dev.deploy.parameters]
 stack_name = "python-app"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ssa74km4w6q0"
 s3_prefix = "python-app"
