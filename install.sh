@@ -1,18 +1,11 @@
 #!/bin/bash
-echo "Configuring time zone..."
-ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-echo "Installing dependencies..."
-DEBIAN_FRONTEND=noninteractive
-GRADLE_VERSION=6.5.1
-GRADLE_HOME_VAR=/opt/gradle/latest
-apt-get -qq update -y && apt-get install -y unzip wget zip git-all curl openjdk-11-jdk
 echo "Installing Gradle..."
-wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
-unzip -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
+wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
+unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
 echo "Setting up Gradle environment..."
-ln -s /opt/gradle/gradle-${GRADLE_VERSION} /opt/gradle/latest
-echo "export GRADLE_HOME=/opt/gradle/latest" >> /etc/profile.d/gradle.sh
-echo "export PATH=${GRADLE_HOME_VAR}/bin:${PATH}" >> /etc/profile.d/gradle.sh
+ln -s /opt/gradle/gradle-6.5.1 /opt/gradle/latest
+echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
+echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
 chmod +x /etc/profile.d/gradle.sh
 . /etc/profile.d/gradle.sh
 echo "Configuring terraform 1.1.9..."
