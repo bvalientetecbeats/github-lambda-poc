@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-python:
+  build-typescript:
     working_directory: /tmp/project/
     docker:
       - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
@@ -15,10 +15,7 @@ jobs:
             set -e
             echo "Getting started with Python build..."
             echo "Setting up environment dependencies..."
-            TFVAR_environment='dev'            
-            echo "Installing Python requirements..." 
-            apt-get install -y python3-pip
-            pip install -r ./.build/tests/requirements.txt --user
+            TFVAR_environment='dev'
             echo "Installing Gradle..."
             wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
             unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
@@ -36,7 +33,7 @@ jobs:
             echo "Starting Kotlin project build"
             cd ./.build
             ls -lah && pwd
-            sam build
+            sam build --beta-features
       - persist_to_workspace:
           root: .
           paths:
@@ -56,11 +53,6 @@ jobs:
           command: |
             set -e   
             echo "Getting started with Unit Test..."
-            echo "Setting up environment dependencies..."
-            TFVAR_environment='dev'
-            echo "Installing Python requirements..."
-            apt-get install -y python3-pip            
-            pip install -r ./.build/tests/requirements.txt --user
             echo "Installing Gradle..."
             wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
             unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
@@ -76,13 +68,14 @@ jobs:
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
             aws configure set default.region $AWS_DEFAULT_REGION
             echo "Starting Unit Test..."
-            cd ./.build
-            python3 -m pytest tests/unit -v
+            cd ./.build/hello-world/
+            npm install
+            npm run test
       - persist_to_workspace:
           root: .
           paths:
             - .
-  deploy-python-dev:  
+  deploy-typescript-dev:  
     working_directory: /tmp/project/
     docker:
       - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
@@ -101,7 +94,7 @@ jobs:
           root: .
           paths:
             - .
-  deploy-python-test:  
+  deploy-typescript-test:  
     working_directory: /tmp/project/
     docker:
       - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
@@ -135,53 +128,12 @@ jobs:
             aws configure set default.region $AWS_DEFAULT_REGION
             echo "Deploying Lambda function with AWS SAM..."            
             cd ./.build
-            sam deploy --config-env $TFVAR_environment --no-fail-on-empty-changeset
+            sam deploy --config-env $TFVAR_environment --stack-name ${TFVAR_environment}-typescript-app --no-fail-on-empty-changeset
       - persist_to_workspace:
           root: .
           paths:
             - .
-  integration-test:
-    working_directory: /tmp/project/
-    docker:
-      - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
-        aws_auth:
-          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
-          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: integration-test
-          command: |
-            set -e   
-            echo "Getting started with Integration Test..."
-            echo "Setting up environment dependencies..."
-            TFVAR_environment='dev'
-            echo "Installing Python requirements..."
-            apt-get install -y python3-pip            
-            pip install -r ./.build/tests/requirements.txt --user
-            echo "Installing Gradle..."
-            wget -qq https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp
-            unzip -qq -d /opt/gradle /tmp/gradle-${GRADLE_VERSION}-bin.zip
-            echo "Setting up Gradle environment..."
-            ln -s /opt/gradle/gradle-7.3.3 /opt/gradle/latest
-            echo "export GRADLE_HOME=${GRADLE_HOME_VAR}" >> /etc/profile.d/gradle.sh
-            echo "export PATH=${PATH}" >> /etc/profile.d/gradle.sh
-            chmod +x /etc/profile.d/gradle.sh
-            . /etc/profile.d/gradle.sh
-            gradle -v
-            echo "Setting up AWS credentials..."
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
-            aws configure set default.region $AWS_DEFAULT_REGION
-            echo "Starting Integration Test..."
-            cd ./.build
-            AWS_SAM_STACK_NAME=dev-python-app python3 -m pytest tests/integration -v
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  deploy-python-prod:  
+  deploy-typescript-prod:  
     working_directory: /tmp/project/
     docker:
       - image: 416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:kotlin-latest
@@ -215,28 +167,25 @@ jobs:
             aws configure set default.region $AWS_DEFAULT_REGION
             echo "Deploying Lambda function with AWS SAM..."            
             cd ./.build
-            sam deploy --config-env $TFVAR_environment --no-fail-on-empty-changeset
+            sam deploy --config-env $TFVAR_environment --stack-name ${TFVAR_environment}-typescript-app --no-fail-on-empty-changeset
 workflows:
   version: 2
-  deploy-python:
+  deploy-typescript:
     jobs:
-      - build-python
+      - build-typescript
       - unit-test:
           requires:
-            - build-python
-      - deploy-python-dev:
+            - build-typescript
+      - deploy-typescript-dev:
           requires:
             - unit-test
-      - deploy-python-test:
+      - deploy-typescript-test:
           requires:
-            - deploy-python-dev
-      - integration-test:
-          requires:
-            - deploy-python-test
+            - deploy-typescript-dev
       - approve-deploy-prod:
           type: approval
           requires:
-            - integration-test
-      - deploy-python-prod:
+            - deploy
+      - deploy-typescript-prod:
           requires:
             - approve-deploy-prod

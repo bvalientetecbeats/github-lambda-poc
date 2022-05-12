@@ -1,10 +1,19 @@
 version = 0.1
-[dev]
-[dev.deploy]
+
 [dev.deploy.parameters]
-stack_name = "dev-python-app"
+stack_name = "dev-typescript-app"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ssa74km4w6q0"
-s3_prefix = "dev-python-app"
+s3_prefix = "dev-typescript-app"
 region = "us-west-2"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
+confirm_changeset = false
+
+[qa.deploy.parameters]
+stack_name = "qa-typescript-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1bcwtryyiha3k"
+s3_prefix = "qa-typescript-app"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+confirm_changeset = false
