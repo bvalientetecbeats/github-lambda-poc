@@ -1,0 +1,14 @@
+{
+    "name": "react-container",
+    "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/demo-repo:1.0",
+    "memory": 1024,
+    "cpu": 512,
+    "essential": true,
+    "entryPoint": ["/"],
+    "portMappings": [
+        {
+        "containerPort": 80,
+        "hostPort": 80
+        }
+    ]
+}
