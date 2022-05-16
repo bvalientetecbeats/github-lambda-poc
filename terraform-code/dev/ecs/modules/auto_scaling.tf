@@ -1,7 +1,8 @@
 # auto_scaling.tf
 resource "aws_appautoscaling_target" "target" {
-  service_namespace  = "react-ecs"
-  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.main.name}"
+  service_namespace = "ecs"
+  resource_id       = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.main.name}"
+  #resource_id = "service/react-cluster/react-service"
   scalable_dimension = "ecs:service:DesiredCount"
   min_capacity       = 3
   max_capacity       = 6

@@ -1,10 +1,9 @@
 # security.tf
-
 # ALB Security Group: Edit to restrict access to the application
 resource "aws_security_group" "lb" {
   name        = "react-alb-security-group"
   description = "controls access to the ALB"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
   ingress {
     protocol    = "tcp"
@@ -25,7 +24,7 @@ resource "aws_security_group" "lb" {
 resource "aws_security_group" "ecs_tasks" {
   name        = "react-ecs-tasks-sg"
   description = "allow inbound access from the ALB only"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
   ingress {
     protocol        = "tcp"

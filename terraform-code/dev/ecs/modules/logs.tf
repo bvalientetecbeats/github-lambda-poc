@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "react_log_group" {
   retention_in_days = 3
 
   tags = {
-    Project = "DevOps-POC"
+    Environment = var.tag_owner
   }
 }
 
