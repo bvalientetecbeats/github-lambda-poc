@@ -23,7 +23,7 @@ jobs:
             EOF
             sudo su - root << EOF
             curl -sL https://deb.nodesource.com/setup_14.x | bash -
-            apt-get install -y nodejs
+            apt-get install -y nodejs --force-yes
             EOF
             echo "Setting up AWS credentials..."
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
