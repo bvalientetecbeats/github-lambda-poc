@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build-container-python:
+    working_directory: /tmp/project/
+    docker:
+      - image: docker:20.10.16-alpine3.15
+    steps:
+      - checkout
+      - run:
+          name: lambda-build
+          command: |
+            set -e
+            echo "Getting started with Docker image build..."
+            echo "Installing dependencies..."
+            apk update && apk add --no-cache aws-cli
+            echo "Setting up AWS credentials..."
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            cd ./.build/
+            docker build -t cicdtools:react-latest .
+            docker tag cicdtools:react-latest $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            docker push $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy-ecs-dev:  
+    working_directory: /tmp/project/
+    docker:
+      - image: $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:kotlin-latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .          
+      - run:
+          name: lambda-deployment
+          command: |
+            echo "Setting up environment..."
+            TFVAR_environment='dev'
+            echo "Setting up AWS credentials..."    
+            AWS_PAGER=''
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Starting terraform init..."
+            cd ./terraform-code/$TFVAR_environment/ecs
+            terraform init
+            echo "Starting terraform plan..."
+            terraform plan -out tfapply
+            echo "Starting terraform apply..."
+            terraform apply -auto-approve tfapply
+workflows:
+  version: 2
+  deploy-python-containerized:
+    jobs:
+      - build-container-python
+      - deploy-ecs-dev:
+          requires:
+            - build-container-python

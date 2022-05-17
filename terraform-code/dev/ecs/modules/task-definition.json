@@ -1,0 +1,28 @@
+[
+    {
+        "name": "react-container",
+        "volumesFrom": [],
+        "memory": 512,
+        "portMappings": [
+            {
+                "hostPort": 80,
+                "containerPort": 80,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "mountPoints": [],
+        "entryPoint": ["/"],        
+        "environment": [],
+        "image": "416669478724.dkr.ecr.us-west-2.amazonaws.com/cicdtools:react-latest",
+        "cpu": 1,
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "/ecs/react-task",
+                "awslogs-region": "us-west-2",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]
