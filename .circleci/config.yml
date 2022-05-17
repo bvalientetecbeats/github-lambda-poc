@@ -116,8 +116,9 @@ jobs:
             echo "Setting up ECR QA environment..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
             echo "Tagging and pushing docker image to QA..."
-            docker tag cicdtools:react-latest $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest            
+            docker tag $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest            
             echo "Pushing docker image to ECR..."
+            docker image ls
             docker push $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
             echo "Removing untagged docker images from ECR QA..."
             IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
