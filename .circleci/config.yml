@@ -74,3 +74,6 @@ workflows:
   deploy-python-containerized:
     jobs:
       - build-container-python
+      - deploy-ecs-dev:
+          requires:
+            - build-container-python
