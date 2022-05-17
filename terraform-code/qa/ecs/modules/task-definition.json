@@ -1,0 +1,19 @@
+[
+    {
+        "name": "react-container",
+        "volumesFrom": [],
+        "memory": 512,
+        "portMappings": [
+            {
+                "hostPort": 80,
+                "containerPort": 80,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "mountPoints": [],       
+        "environment": [],
+        "image": "739237732722.dkr.ecr.us-west-2.amazonaws.com/cicdtools:react-latest",
+        "cpu": 1
+    }
+]
