@@ -13,11 +13,11 @@ jobs:
             echo "Getting started with Docker image build..."
             echo "Installing dependencies..."
             apk update && apk add --no-cache aws-cli
+            aws --version
             echo "Setting up AWS credentials..."
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
-            aws configure set default.region $AWS_DEFAULT_REGION
-            aws --version
+            aws configure set default.region $AWS_DEFAULT_REGION            
             aws s3 ls
             cd ./.build/
             docker build -t cicdtools:react-latest .
