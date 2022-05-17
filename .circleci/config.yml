@@ -63,7 +63,7 @@ jobs:
       - attach_workspace:
           at: .          
       - run:
-          name: lambda-deployment
+          name: ECS Deployment to Dev
           command: |
             echo "Setting up environment..."
             TFVAR_environment='dev'
