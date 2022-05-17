@@ -13,6 +13,8 @@ jobs:
           command: |
             set -e
             echo "Getting started with Docker image build..."
+            echo "Installing dependencies..."
+            AWS_PAGER=''
             sudo su - root << EOF
             apt-get -qq update -y && apt-get -qq install -y curl unzip
             echo "Configuring AWS CLI 2..."
@@ -43,7 +45,7 @@ jobs:
             docker push $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
             echo "Deleting untagged docker images..."
             IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
-            aws ecr batch-delete-image --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids "$IMAGES_TO_DELETE" || true
+            aws ecr batch-delete-image --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids cicdtools:react-latest --no-cli-pager || true
       - persist_to_workspace:
           root: .
           paths:
@@ -65,7 +67,6 @@ jobs:
             echo "Setting up environment..."
             TFVAR_environment='dev'
             echo "Setting up AWS credentials..."    
-            AWS_PAGER=''
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
             aws configure set default.region $AWS_DEFAULT_REGION
