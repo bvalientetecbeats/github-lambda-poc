@@ -46,7 +46,7 @@ jobs:
             sleep 15
             echo "Deleting untagged docker image..."
             IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
-            aws ecr batch-delete-image --no-cli-pager --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids $IMAGES_TO_DELETE || true
+            aws ecr batch-delete-image --no-cli-pager --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids "$IMAGES_TO_DELETE" || true
       - persist_to_workspace:
           root: .
           paths:
