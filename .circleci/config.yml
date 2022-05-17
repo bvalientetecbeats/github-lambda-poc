@@ -38,6 +38,7 @@ jobs:
             npm run build
             ls -lah && pwd
             ls -lah src
+            ls -lah build
             echo "Build completed..."
             echo "Docker image building..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
