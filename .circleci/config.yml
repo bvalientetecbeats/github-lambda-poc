@@ -154,4 +154,13 @@ workflows:
   version: 2
   deploy-python-containerized:
     jobs:
-      - promote-to-qa
+      - build-container-python
+      - deploy-ecs-dev:
+          requires:
+            - build-container-python
+      - promote-to-qa:
+          requires:
+            - deploy-ecs-dev
+      - deploy-ecs-qa:
+          requires:
+            - promote-to-qa
