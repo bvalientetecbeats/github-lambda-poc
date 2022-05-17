@@ -43,6 +43,7 @@ jobs:
             docker tag cicdtools:react-latest $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
             echo "Pushing docker image to ECR..."
             docker push $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            sleep 15
             echo "Deleting untagged docker image..."
             IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
             aws ecr batch-delete-image --no-cli-pager --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids $IMAGES_TO_DELETE || true
