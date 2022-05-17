@@ -3,7 +3,7 @@ jobs:
   build-container-python:
     working_directory: /tmp/project/
     docker:
-      - image: circleci/python:2.7.14
+      - image: circleci/python:latest
     steps:
       - checkout
       - setup_remote_docker:
@@ -30,13 +30,20 @@ jobs:
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
             aws configure set default.region $AWS_DEFAULT_REGION
             aws s3 ls
+            echo "Starting Python build..."
             cd ./.build/
             npm ci
             npm run build
+            echo "Build completed..."
+            echo "Docker image building..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
             docker build -t cicdtools:react-latest .
             docker tag cicdtools:react-latest $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            echo "Pushing docker image to ECR..."
             docker push $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            echo "Deleting untagged docker images..."
+            IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+            aws ecr batch-delete-image --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids "$IMAGES_TO_DELETE" || true
       - persist_to_workspace:
           root: .
           paths:
@@ -44,7 +51,7 @@ jobs:
   deploy-ecs-dev:  
     working_directory: /tmp/project/
     docker:
-      - image: $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:kotlin-latest
+      - image: $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:base-latest
         aws_auth:
           aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
           aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
