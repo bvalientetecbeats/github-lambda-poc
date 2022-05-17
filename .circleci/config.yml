@@ -13,14 +13,14 @@ jobs:
           command: |
             set -e
             echo "Getting started with Docker image build..."
-            sudo su
+            sudo su - root << EOF
             apt-get -qq update -y && apt-get -qq install -y curl unzip
             echo "Configuring AWS CLI 2..."
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip -qq awscliv2.zip
             ./aws/install
             aws --version
-            exit
+            EOF
             echo "Setting up AWS credentials..."
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
