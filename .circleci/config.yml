@@ -78,6 +78,50 @@ jobs:
             terraform plan -out tfapply
             echo "Starting terraform apply..."
             terraform apply -auto-approve tfapply
+  promote-to-qa:
+    working_directory: /tmp/project/
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - setup_remote_docker:
+          version: 20.10.14        
+      - run:
+          name: Promote Docker image to QA account
+          command: |
+            echo "Setting up environment..."
+            echo "Installing dependencies..."
+            AWS_PAGER=''
+            sudo su - root << EOF
+            apt-get -qq update -y && apt-get -qq install -y curl unzip
+            echo "Configuring AWS CLI 2..."
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -qq awscliv2.zip
+            ./aws/install
+            aws --version
+            EOF
+            echo "Setting up AWS Dev credentials..."    
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_DEV
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_DEV
+            aws configure set default.region $AWS_DEFAULT_REGION
+            echo "Getting latest Dev image..."
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+            docker pull $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            docker images ls
+            echo "Setting up AWS QA credentials..."    
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_QA
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_QA
+            echo "Setting up ECR QA environment..."
+            aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+            echo "Tagging and pushing docker image to QA..."
+            docker tag cicdtools:react-latest $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest            
+            echo "Pushing docker image to ECR..."
+            docker push $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
+            echo "Removing untagged docker images from ECR QA..."
+            IMAGES_TO_DELETE=$( aws ecr list-images --region $AWS_DEFAULT_REGION --repository-name cicdtools --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+            aws ecr batch-delete-image --no-cli-pager --region $AWS_DEFAULT_REGION --repository-name cicdtools --image-ids "$IMAGES_TO_DELETE" || true
   deploy-ecs-qa:
     working_directory: /tmp/project/
     docker:
@@ -105,23 +149,6 @@ jobs:
             terraform plan -out tfapply
             echo "Starting terraform apply..."
             terraform apply -auto-approve tfapply
-orbs: 
-  docker: circleci/docker@2.1.1
-  jobs:
-    promote-to-qa:  
-      executor: docker/machine
-      steps:
-        - docker/pull:
-            images: $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
-            aws_auth:
-              aws_access_key_id: $AWS_ACCESS_KEY_ID_DEV
-              aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_DEV
-        - docker/publish:
-          image: $AWS_ACCOUNT_QA.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
-          update-description: true
-          aws_auth:
-            aws_access_key_id: $AWS_ACCESS_KEY_ID_QA
-            aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_QA
 workflows:
   version: 2
   deploy-python-containerized:
