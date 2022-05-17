@@ -109,7 +109,7 @@ jobs:
             echo "Getting latest Dev image..."
             aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
             docker pull $AWS_ACCOUNT_DEV.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cicdtools:react-latest
-            docker images ls
+            docker image ls
             echo "Setting up AWS QA credentials..."    
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID_QA
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY_QA
