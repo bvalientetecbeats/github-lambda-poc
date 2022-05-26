@@ -26,7 +26,8 @@ jobs:
           name: Update RDS DB with Liquibase
           command: |
             set -e
-            apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+            npm install libnss3
+            #apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
             npm run cy:run
 workflows:
   end-to-end-testing:
