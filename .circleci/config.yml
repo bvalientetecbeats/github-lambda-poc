@@ -4,7 +4,7 @@ orbs:
 jobs:
   e2e-test:
     docker:
-      - image: circleci/node:10
+      - image: cypress/base:16.14.2
     working_directory: /tmp/project/
     steps:
       - checkout
