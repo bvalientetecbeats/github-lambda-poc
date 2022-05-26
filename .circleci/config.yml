@@ -22,7 +22,12 @@ jobs:
       # we need to install CircleCI CLI tool
       # to run the "manual" tests
       - circleci-cli/install
-      - run: npm run cy:run
+      - run: 
+          name: Update RDS DB with Liquibase
+          command: |
+            set -e
+            npm install libnss3.so
+            npm run cy:run
 workflows:
   end-to-end-testing:
     jobs:
