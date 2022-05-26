@@ -40,7 +40,7 @@ jobs:
           command: |
             set -e            
             echo "Installing dependencies..."
-            sudo apt-get update -y && apt-get install -y zip
+            apt-get update -y && apt-get install -y zip
             echo "Running e2e test..."
             npm run cy:run
             echo "Saving screenshots..."
