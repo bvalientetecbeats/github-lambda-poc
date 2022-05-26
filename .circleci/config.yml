@@ -44,9 +44,9 @@ jobs:
             echo "Running e2e test..."
             npm run cy:run
             echo "Saving screenshots..."
-            cd ~/repo/cypress/snapshots/ && zip snapshots_$CIRCLE_PROJECT_REPONAME_$CIRCLE_BUILD_NUM.zip .
+            cd ~/repo/cypress/snapshots/ && ls -lah && zip e2e_snapshots_$CIRCLE_BUILD_NUM.zip .
       - store_artifacts:
-          path: ~/repo/cypress/snapshots/snapshots_$CIRCLE_PROJECT_REPONAME_$CIRCLE_BUILD_NUM.zip
+          path: ~/repo/cypress/snapshots/e2e_snapshots_$CIRCLE_BUILD_NUM.zip
 workflows:
   end-to-end-testing:
     jobs:
