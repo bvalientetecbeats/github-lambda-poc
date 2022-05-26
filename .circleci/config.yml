@@ -35,7 +35,18 @@ jobs:
       #- run: 
       #    command: npm start
       #    background: true
-      - run: npm run cy:run            
+      - run:
+          name: Run test and save screenshots
+          command: |
+            set -e            
+            echo "Installing dependencies..."
+            sudo apt-get update -y && apt-get install -y zip
+            echo "Running e2e test..."
+            npm run cy:run
+            echo "Saving screenshots..."
+            cd ~/repo/cypress/snapshots/ && zip snapshots_$CIRCLE_PROJECT_REPONAME_$CIRCLE_BUILD_NUM.zip .
+      - store_artifacts:
+          path: ~/repo/cypress/snapshots/snapshots_$CIRCLE_PROJECT_REPONAME_$CIRCLE_BUILD_NUM.zip
 workflows:
   end-to-end-testing:
     jobs:
