@@ -17,7 +17,7 @@ jobs:
       - run: npm i
       - save_cache:
           paths:
-            - node_modules
+            - ~/.cache
           key: v1-dependencies-{{ checksum "package.json" }}
       # we need to install CircleCI CLI tool
       # to run the "manual" tests
@@ -26,7 +26,6 @@ jobs:
           name: Run e2e test
           command: |
             set -e
-            cypress install
             npm run cy:run
 workflows:
   end-to-end-testing:
