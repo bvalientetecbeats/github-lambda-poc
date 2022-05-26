@@ -1,0 +1,9 @@
+LEVEL_QA_SITE_ACCESS_USER_NAME=levelqa
+LEVEL_QA_SITE_ACCESS_PASSWORD=str!n5ok4
+MAILOSAUR_API_KEY=3xi9Jjb9xwASe3C2
+
+** QA **
+TARGET_URL=apply.qa.levelgoals.com
+
+// ** LOCAL **
+//TARGET_URL=localhost:3000
