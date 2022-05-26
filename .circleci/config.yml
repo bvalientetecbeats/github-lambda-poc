@@ -47,6 +47,7 @@ jobs:
             cd ~/repo/cypress/snapshots/ && ls -lah && pwd && zip -r e2e_snapshots_$CIRCLE_BUILD_NUM.zip .
       - store_artifacts:
           path: ~/repo/cypress/snapshots/e2e_snapshots_$CIRCLE_BUILD_NUM.zip
+          destination: e2e_snapshots_$CIRCLE_BUILD_NUM.zip
 workflows:
   end-to-end-testing:
     jobs:
