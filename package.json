@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "cy:open": "cypress open",
-    "cy:run": "cross-env CYPRESS_baseUrl=http://localhost:9000 cypress run",
+    "cy:run": "cypress run",
     "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx ./cypress/integration",
     "lint:fix": "eslint --cache --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "prepare": "husky install"
