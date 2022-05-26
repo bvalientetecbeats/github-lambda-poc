@@ -23,7 +23,7 @@ describe.only('Level Apply', () => {
   const takeSnapShotWithLabel = (width: number) => {
     takeSnapShot(width);
   };
-  it.only(`should have a Layout 2000 x 760 `, () => {
+  it(`should have a Layout 2000 x 760 `, () => {
     takeSnapShotWithLabel(760);
   });
 });

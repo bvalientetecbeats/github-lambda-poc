@@ -36,13 +36,17 @@ jobs:
       #    command: npm start
       #    background: true
       - run:
-          name: Run test and save screenshots
+          name: Run test
           command: |
             set -e            
-            echo "Installing dependencies..."
-            apt-get update -y && apt-get install -y zip
             echo "Running e2e test..."
             npm run cy:run
+      - run:
+          name: Save screenshots
+          command: |
+            set -e
+            echo "Installing dependencies..."
+            apt-get -qq update -y && apt-get -qq install -y zip
             echo "Saving screenshots..."
             cd ~/repo/cypress/snapshots/ && ls -lah && pwd
             zip -r e2e_snapshots.zip . && ls -lah && pwd
