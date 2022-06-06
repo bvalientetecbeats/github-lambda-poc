@@ -1,0 +1,33 @@
+# See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification.html
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+    Stage:
+        Type: AWS::SSM::Parameter::Value<String>
+        Default: stage
+
+Conditions:
+    Prod: !Equals [!Ref Stage, prod]
+
+Resources:
+    Function:
+        Type: AWS::Serverless::Function
+        Properties:
+            FunctionName: kotlin-unit-testing
+            CodeUri: .
+            Handler: com.levelgoals.unittest.Handler::handleRequest
+            Runtime: java11
+            Timeout: 25
+            MemorySize: 1024
+            Environment:
+                Variables:
+                    STAGE: !Ref Stage
+#            VpcConfig:
+#                SecurityGroupIds: !If [Prod, [sg-0c4b7a93061692d21], [sg-0a62d233ae9c0df2c]]
+#                SubnetIds: !If [Prod,
+#                    [subnet-052055ecdd0c3753a, subnet-0b8fb5c4572bad3f2, subnet-0c08ae89a0485bd1b],
+#                    [subnet-079b380dcaf92d828, subnet-052c6f82e895f2372, subnet-06368c8cba4174ca9]
+#                ]

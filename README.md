@@ -1,3 +1,3 @@
-# github-lambda-poc
+# Kotlin deployment
 
-This repo contains the source code to automatically update an AWS Lambda Function code using CodeBuild.
+This repo contains Kotlin automated deployment to dev environment

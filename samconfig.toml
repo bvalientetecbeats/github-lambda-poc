@@ -1,0 +1,18 @@
+# See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+
+version = 0.1
+
+[dev.deploy.parameters]
+stack_name = "kotlin-unit-testing"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ssa74km4w6q0"
+s3_prefix = "kotlin-unit-testing"
+# confirm_changeset = true
+
+[qa.deploy.parameters]
+stack_name = "kotlin-unit-testing-test"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1bcwtryyiha3k"
+s3_prefix = "kotlin-unit-testing-test"
