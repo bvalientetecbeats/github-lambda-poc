@@ -2,31 +2,13 @@ version: '2.1'
 orbs:
   sam: circleci/aws-sam-serverless@3.0
 jobs:
-  test_my_api:
-    docker:
-      - image: 'cimg/node:lts'
+  build_app:
+    executor: sam/default
     steps:
-      - run: echo "Run your API tests here"
+      - checkout
+      - sam/install
+      - run: sam build
 workflows:
-  test_and_deploy:
+  my-workflow:
     jobs:
-      - sam/deploy:
-          context: aws-credentials-context
-          aws-secret-access-key: $AWS_ACCESS_KEY_ID_DEV
-          aws-access-key-id: $AWS_SECRET_ACCESS_KEY_DEV
-          name: deploy-dev
-          s3-bucket: my-s3-bucket
-          stack-name: dev-kotlin-stack
-          template: ./template.yml
-      - test_my_api:
-          requires:
-            - deploy-dev
-      - sam/deploy:
-          context: aws-credentials-context
-          aws-secret-access-key: $AWS_ACCESS_KEY_ID_asd
-          aws-access-key-id: $AWS_SECRET_ACCESS_KEY_asd
-          name: deploy-production
-          requires:
-            - test_my_api
-          stack-name: production-stack
-          template: ./template.yml
+      - build_app
