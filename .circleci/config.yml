@@ -25,14 +25,14 @@ jobs:
 workflows:
   kotlin-pipeline:
     jobs:
-      - build_lambda
-      - unit_test:
-          requires:
-            - build_lambda
+#      - build_lambda
+#      - unit_test:
+#          requires:
+#            - build_lambda
       - sam/deploy:
           context: aws-credentials-context
           name: deploy-dev
-          requires:
-            - unit_test
+#          requires:
+#            - unit_test
           stack-name: dev-alloy-eval-stack
           template: /home/circleci/template.yml
