@@ -9,7 +9,7 @@ jobs:
       - sam/install
       - run: |
           gradle dependencyUpdates
-          gradle build -x test --refresh-dependencies
+          gradle clean build -x test --refresh-dependencies
       - persist_to_workspace:
           root: .
           paths:
