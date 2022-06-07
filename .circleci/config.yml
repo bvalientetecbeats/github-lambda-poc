@@ -3,13 +3,6 @@ orbs:
   sam: circleci/aws-sam-serverless@3.0
 jobs:
   build_app:
-    parameters:
-      aws-access-key-id:
-        #type: env_var_name
-        default: $AWS_ACCESS_KEY_ID_DEV
-      aws-secret-access-key:
-        #type: env_var_name
-        default: $AWS_SECRET_ACCESS_KEY_DEV
     executor: sam/default
     steps:
       - checkout
@@ -18,4 +11,9 @@ jobs:
 workflows:
   my-workflow:
     jobs:
-      - build_app
+      - build_app:
+          parameters:
+          aws-access-key-id:
+            default: $AWS_ACCESS_KEY_ID_DEV
+          aws-secret-access-key:
+            default: $AWS_SECRET_ACCESS_KEY_DEV
