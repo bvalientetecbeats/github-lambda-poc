@@ -1,113 +1,43 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    application
+    val gradleVersionsPluginVersion: String by System.getProperties()
+    val kotlinVersion: String by System.getProperties()
+    val ktlintGradleVersion: String by System.getProperties()
+
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
+    id("org.jlleitschuh.gradle.ktlint") version ktlintGradleVersion
+    id("com.github.ben-manes.versions") version gradleVersionsPluginVersion
 }
 
 val awsVersion: String by project
-val awsLambdaJavaCoreVersion: String by project
-val awsLambdaJavaEventsVersion: String by project
-//val bigBangDbKotlinVersion: String by project
-//val kotlinSerializationVersion: String by project
-//val kotlinUtilsVersion: String by project
-
-group = "org.example"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-    implementation("com.amazonaws", "aws-lambda-java-core", awsLambdaJavaCoreVersion)
-    implementation("com.amazonaws", "aws-lambda-java-events", awsLambdaJavaEventsVersion)
-    implementation(platform("software.amazon.awssdk:bom:$awsVersion"))
-    implementation("software.amazon.awssdk", "ssm")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation("io.mockk:mockk:1.12.3")
-    implementation(kotlin("stdlib-jdk8"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-application {
-    mainClass.set("MainKt")
-}
-
-
-kotlin.sourceSets.main {
-    kotlin.srcDirs("src/main")
-}
-
-sourceSets.main {
-    resources.srcDirs("resources")
-}
-
-sourceSets.test {
-    resources.srcDirs("src/test")
-}
-
-
-
-/*
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-plugins {
-    kotlin("jvm") version "1.6.20"
-    application
-}
-
-group = "me.oren"
-version = "1.0-SNAPSHOT"
-
-val awsVersion: String by project
-val awsLambdaJavaCoreVersion: String by project
-val awsLambdaJavaEventsVersion: String by project
-val bigBangDbKotlinVersion: String by project
-val kotlinSerializationVersion: String by project
+val bbdbKotlinVersion: String by project
 val kotlinUtilsVersion: String by project
+val ktorVersion: String by project
+val log4jVersion: String by project
+val slf4jVersion: String by project
 
 repositories {
     mavenCentral()
+    levelRepo("big-bang-db-kotlin")
+    levelRepo("kotlin-utils")
 }
 
 dependencies {
-    implementation("com.amazonaws", "aws-lambda-java-core", awsLambdaJavaCoreVersion)
-    implementation("com.amazonaws", "aws-lambda-java-events", awsLambdaJavaEventsVersion)
-    implementation(platform("software.amazon.awssdk:bom:$awsVersion"))
-    implementation("software.amazon.awssdk", "ssm")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation(kotlin(""))
-    testImplementation("io.mockk:mockk:1.12.3")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("com.levelgoals", "big-bang-db-kotlin", bbdbKotlinVersion)
+    implementation("com.levelgoals", "kotlin-utils", kotlinUtilsVersion)
+    implementation("io.ktor", "ktor-client-auth", ktorVersion)
+    implementation("io.ktor", "ktor-client-content-negotiation", ktorVersion)
+    implementation("io.ktor", "ktor-client-core", ktorVersion)
+    runtimeOnly("io.ktor", "ktor-client-java", ktorVersion)
+    implementation("io.ktor", "ktor-serialization-kotlinx-json", ktorVersion)
+    runtimeOnly("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
+    implementation("org.slf4j", "slf4j-api", slf4jVersion)
+    implementation("software.amazon.awssdk", "dynamodb-enhanced", awsVersion)
+    implementation("software.amazon.awssdk", "ssm", awsVersion)
 }
-
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-application {
-    mainClass.set("MainKt")
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-//val compileTestKotlin: KotlinCompile by tasks
-//compileTestKotlin.kotlinOptions {
-//    jvmTarget = "1.8"
-//}
-
 
 kotlin.sourceSets.main {
     kotlin.srcDirs("src")
@@ -118,36 +48,30 @@ sourceSets.main {
 }
 
 sourceSets.test {
-    resources.srcDirs("test")
+    resources.srcDirs("test/resources")
 }
 
-dependencies {
-    testImplementation(kotlin("test"))
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks.compileKotlin {
+    dependsOn("ktlintFormat")
 }
 
-//tasks.compileKotlin {
-//    dependsOn("ktlintFormat")
-//}
+configure<KtlintExtension> {
+    outputToConsole.set(true)
+    disabledRules.set(
+        setOf(
+            "filename"
+        )
+    )
+}
 
-//configure<KtlintExtension> {
-//    outputToConsole.set(true)
-//    disabledRules.set(
-//        setOf(
-//            "filename"
-//        )
-//    )
-//}
-
-//fun RepositoryHandler.levelRepo(name: String) = maven {
-//    url = uri("https://maven.pkg.github.com/levelgoals/$name")
-//    credentials {
-//        username = System.getenv("GITHUB_USERNAME")
-//        password = System.getenv("GITHUB_TOKEN")
-//    }
-//}
-
- */
+fun RepositoryHandler.levelRepo(name: String) = maven {
+    url = uri("https://maven.pkg.github.com/levelgoals/$name")
+    credentials {
+        username = System.getenv("GITHUB_USERNAME")
+        password = System.getenv("GITHUB_TOKEN")
+    }
+}

@@ -1,3 +1,0 @@
-
-sam build
-sam deploy --config-env dev
