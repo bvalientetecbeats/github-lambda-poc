@@ -19,7 +19,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: gradle test
+      - run: |
+          gradle test
+          ls -lah && pwd
 workflows:
   kotlin-pipeline:
     jobs:
@@ -28,7 +30,6 @@ workflows:
           requires:
             - build_lambda
       - sam/deploy:
-          run: ls -lah && pwd
           context: aws-credentials-context
           name: deploy-dev
           requires:
