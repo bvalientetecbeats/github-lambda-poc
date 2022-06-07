@@ -7,8 +7,7 @@ jobs:
     steps:
       - checkout
       - sam/install
-      - run: |
-          gradle build -x test
+      - run: gradle build -x test
       - persist_to_workspace:
           root: .
           paths:
@@ -19,9 +18,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: |
-          gradle test
-          ls -lah && pwd
+      - run: gradle test
 workflows:
   kotlin-pipeline:
     jobs:
