@@ -32,7 +32,8 @@ workflows:
       - sam/deploy:
           context: aws-credentials-context
           name: deploy-dev
+          s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-1ssa74km4w6q0
 #          requires:
 #            - unit_test
           stack-name: dev-alloy-eval-stack
-          template: template.yml
+          template: $CIRCLE_WORKING_DIRECTORY/template.yml
