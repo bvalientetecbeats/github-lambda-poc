@@ -35,4 +35,4 @@ workflows:
           requires:
             - unit_test
           stack-name: dev-alloy-eval-stack
-          template: ${CIRCLE_WORKING_DIRECTORY}/template.yml
+          template: /home/circleci/template.yml
