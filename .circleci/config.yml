@@ -6,7 +6,13 @@ jobs:
     executor: sam/default
     steps:
       - checkout
-      - sam/install
+      - sam/install:
+          context: aws-credentials-context
+          parameters:
+            aws-access-key-id:
+              default: $AWS_ACCESS_KEY_ID_DEV
+            aws-secret-access-key:
+              default: $AWS_SECRET_ACCESS_KEY_DEV
       - run: sam build
 workflows:
   my-workflow:
