@@ -23,7 +23,10 @@ jobs:
 workflows:
   kotlin-pipeline:
     jobs:
-      - build_lambda
+      - build_lambda:
+          context:
+            - build
+            - aws-credentials-context-dev
       - unit_test:
           context: build
           requires:
