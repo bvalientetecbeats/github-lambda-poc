@@ -4,13 +4,11 @@ orbs:
 jobs:
   build_app:
     executor: sam/default
-    context: aws-credentials-context
     steps:
-      - checkout      
+      - checkout
       - sam/install
       - run: sam build
 workflows:
   my-workflow:
     jobs:
       - build_app
-
