@@ -9,7 +9,7 @@ jobs:
       aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_DEV}
     steps:
       - run: |
-          echo ${AWS_ACCESS_KEY_ID_DEV}
+          echo "Testing ID: ${AWS_ACCESS_KEY_ID_DEV}"
       - checkout
       - sam/install
       - run: sam build
