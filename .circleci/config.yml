@@ -16,7 +16,6 @@ jobs:
   unit_test:
     docker:
       - image: gradle
-    context: build
     steps:
       - attach_workspace:
           at: .
@@ -27,6 +26,7 @@ workflows:
       - build_lambda:
           context: build
       - unit_test:
+          context: build
           requires:
             - build_lambda
       - sam/deploy:
