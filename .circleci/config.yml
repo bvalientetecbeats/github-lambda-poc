@@ -4,6 +4,9 @@ orbs:
 jobs:
   build_app:
     executor: sam/default
+    environment:
+      aws-access-key-id: $AWS_ACCESS_KEY_ID_DEV
+      aws-secret-access-key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
       - checkout
       - sam/install
