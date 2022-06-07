@@ -48,6 +48,6 @@ workflows:
           context: aws-credentials-context-prod
           name: deploy-prod
           requires:
-            - deploy-test
+            - approve-deploy-prod
           stack-name: alloy-eval-stack-prod
           template: template.yaml
