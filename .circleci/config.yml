@@ -23,7 +23,8 @@ jobs:
 workflows:
   kotlin-pipeline:
     jobs:
-      - build_lambda
+      - build_lambda:
+          context: build
       - unit_test:
           requires:
             - build_lambda
