@@ -8,7 +8,22 @@ jobs:
       - checkout
       - sam/install
       - run: gradle build -x test
+  unit_test:
+    docker:
+      - image: 'cimg/node:lts'
+    steps:
+      - run: gradle test
 workflows:
   kotlin-pipeline:
     jobs:
       - build_lambda
+      - unit_test:
+          requires:
+            - build_lambda
+      - sam/deploy:
+          context: aws-credentials-context
+          name: deploy-dev
+          requires:
+            - unit_test
+          stack-name: dev-alloy-eval-stack
+          template: ./template.yml
