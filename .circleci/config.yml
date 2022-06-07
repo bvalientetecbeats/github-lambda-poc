@@ -25,15 +25,14 @@ jobs:
 workflows:
   kotlin-pipeline:
     jobs:
-#      - build_lambda
-#      - unit_test:
-#          requires:
-#            - build_lambda
+      - build_lambda
+      - unit_test:
+          requires:
+            - build_lambda
       - sam/deploy:
-          context: aws-credentials-context
+          context: aws-credentials-context-dev
           name: deploy-dev
-          s3-bucket: aws-sam-cli-managed-default-samclisourcebucket-1ssa74km4w6q0
-#          requires:
-#            - unit_test
+          requires:
+            - unit_test
           stack-name: dev-alloy-eval-stack
-          template: $CIRCLE_WORKING_DIRECTORY/template.yaml
+          template: template.yaml
