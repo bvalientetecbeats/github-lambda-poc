@@ -4,15 +4,15 @@ orbs:
 jobs:
   build_app:
     executor: sam/default
+    context: aws-credentials-context
+    parameters:
+      aws-access-key-id:
+        default: $AWS_ACCESS_KEY_ID_DEV
+      aws-secret-access-key:
+        default: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
       - checkout
-      - sam/install:
-          context: aws-credentials-context
-          parameters:
-            aws-access-key-id:
-              default: $AWS_ACCESS_KEY_ID_DEV
-            aws-secret-access-key:
-              default: $AWS_SECRET_ACCESS_KEY_DEV
+      - sam/install
       - run: sam build
 workflows:
   my-workflow:
