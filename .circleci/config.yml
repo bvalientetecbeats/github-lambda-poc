@@ -30,7 +30,9 @@ workflows:
           requires:
             - build_lambda
       - sam/deploy:
-          context: aws-credentials-context-dev
+          context: 
+            - aws-credentials-context-dev
+            - build
           name: deploy-dev
           requires:
             - unit_test
