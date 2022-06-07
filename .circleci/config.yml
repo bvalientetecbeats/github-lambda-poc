@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: |
           echo "Testing ID: ${AWS_ACCESS_KEY_ID_DEV}"
-          echo "$aws-access-key-id"
+          echo "AWS test: ${aws-access-key-id}"
       - checkout
       - sam/install
       - run: sam build
