@@ -8,6 +8,7 @@ jobs:
       aws-access-key-id: $AWS_ACCESS_KEY_ID_DEV
       aws-secret-access-key: $AWS_SECRET_ACCESS_KEY_DEV
     steps:
+      - run: env
       - checkout
       - sam/install
       - run: sam build
