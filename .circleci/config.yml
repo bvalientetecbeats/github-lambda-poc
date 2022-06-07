@@ -1,11 +1,6 @@
 version: '2.1'
 orbs:
   sam: circleci/aws-sam-serverless@3.0
-  parameters:
-    aws-access-key-id:
-      default: $AWS_ACCESS_KEY_ID_DEV
-    aws-secret-access-key:
-      default: $AWS_SECRET_ACCESS_KEY_DEV
 jobs:
   build_app:
     executor: sam/default
@@ -16,6 +11,7 @@ jobs:
           set -e
           env
           sam build
+          echo "La gran pumas!!!"
 workflows:
   my-workflow:
     jobs:
