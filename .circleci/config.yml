@@ -7,8 +7,8 @@ jobs:
     steps:
       - checkout
       - sam/install
-      - run: |
-          gradle clean build -x test
+      - run: |          
+          gradle build -x test
       - persist_to_workspace:
           root: .
           paths:
@@ -16,6 +16,7 @@ jobs:
   unit_test:
     docker:
       - image: gradle
+    context: build
     steps:
       - attach_workspace:
           at: .
