@@ -12,7 +12,10 @@ jobs:
     steps:
       - checkout
       - sam/install
-      - run: sam build
+      - run: |
+          set -e
+          env
+          sam build
 workflows:
   my-workflow:
     jobs:
