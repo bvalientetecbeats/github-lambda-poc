@@ -28,6 +28,7 @@ workflows:
           requires:
             - build_lambda
       - sam/deploy:
+          run: ls -lah && pwd
           context: aws-credentials-context
           name: deploy-dev
           requires:
