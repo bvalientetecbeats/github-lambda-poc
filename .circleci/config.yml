@@ -8,8 +8,7 @@ jobs:
       - checkout
       - sam/install
       - run: |
-          gradle dependencyUpdates
-          gradle clean build -x test --refresh-dependencies
+          gradle clean build -x test
       - persist_to_workspace:
           root: .
           paths:
