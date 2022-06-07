@@ -34,5 +34,23 @@ workflows:
           name: deploy-dev
           requires:
             - unit_test
-          stack-name: dev-alloy-eval-stack
+          stack-name: alloy-eval-stack-dev
+          template: template.yaml
+      - sam/deploy:
+          context: aws-credentials-context-test
+          name: deploy-test
+          requires:
+            - deploy-dev
+          stack-name: alloy-eval-stack-test
+          template: template.yaml
+      - approve-deploy-prod:
+          type: approval
+          requires:
+            - deploy-test
+      - sam/deploy:
+          context: aws-credentials-context-prod
+          name: deploy-prod
+          requires:
+            - deploy-test
+          stack-name: alloy-eval-stack-prod
           template: template.yaml
