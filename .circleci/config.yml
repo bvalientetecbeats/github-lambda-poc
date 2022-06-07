@@ -4,7 +4,7 @@ orbs:
 jobs:
   build_app:
     executor: sam/default
-    context: aws-credentials-context
+    #context: aws-credentials-context
     parameters:
       aws-access-key-id:
         default: $AWS_ACCESS_KEY_ID_DEV
