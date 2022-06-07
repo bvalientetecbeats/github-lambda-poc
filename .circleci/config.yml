@@ -10,7 +10,6 @@ jobs:
     steps:
       - run: |
           echo ${AWS_ACCESS_KEY_ID_DEV}
-          #env
       - checkout
       - sam/install
       - run: sam build
