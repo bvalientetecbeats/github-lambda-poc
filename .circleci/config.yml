@@ -2,19 +2,13 @@ version: '2.1'
 orbs:
   sam: circleci/aws-sam-serverless@3.0
 jobs:
-  build_app:
+  build_lambda:
     executor: sam/default
-    environment:
-      aws-access-key-id: ${AWS_ACCESS_KEY_ID_DEV}
-      aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY_DEV}
     steps:
-      - run: |
-          echo "Testing ID: ${AWS_ACCESS_KEY_ID_DEV}"
-          echo "AWS test: ${aws-access-key-id}"
       - checkout
       - sam/install
-      - run: sam build
+      - run: gradle build -x test
 workflows:
-  my-workflow:
+  kotlin-pipeline:
     jobs:
-      - build_app
+      - build_lambda
