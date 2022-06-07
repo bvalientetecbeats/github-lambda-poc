@@ -10,7 +10,7 @@ jobs:
       - run: gradle build -x test
   unit_test:
     docker:
-      - image: 'amazon/aws-sam-cli-build-image-nodejs12.x'
+      - image: gradle
     steps:
       - run: gradle test
 workflows:
