@@ -7,7 +7,9 @@ jobs:
     steps:
       - checkout
       - sam/install
-      - run: gradle build -x test
+      - run: |
+          gradle dependencyUpdates
+          gradle build -x test
       - persist_to_workspace:
           root: .
           paths:
