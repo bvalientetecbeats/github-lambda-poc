@@ -12,5 +12,5 @@ jobs:
 workflows:
   aws-cli:
     jobs:
-      - aws-cli-example:
+      - aws-cli-amplify:
           context: aws-credentials-context-dev
