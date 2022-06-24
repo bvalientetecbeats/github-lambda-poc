@@ -8,9 +8,9 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile-name: default
-      - aws-amplify/cli
       - run: |
           set -e
+          npm install -g @aws-amplify/cli
           npx create-react-app amplify-app
           cd amplify-app
           amplify init -y
