@@ -10,9 +10,9 @@ jobs:
           profile-name: default
       - run: |
           set -e
-          aws amplify list-apps
-          node -v
-          npm -v
+          npx create-react-app amplify-app
+          cd amplify-app
+          amplify init -y
 workflows:
   aws-cli:
     jobs:
