@@ -1,3 +1,3 @@
-# github-lambda-poc
+### AWS Amplify FrontEnd App
 
-This repo contains the source code to automatically update an AWS Lambda Function code using CodeBuild.
+This CircleCi pipeline creates a new React Amplify app.
