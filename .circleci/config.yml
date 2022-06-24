@@ -10,6 +10,7 @@ jobs:
           profile-name: default
       - run: |
           set -e
+          sudo su
           npm install -g @aws-amplify/cli
           npx create-react-app amplify-app
           cd amplify-app
