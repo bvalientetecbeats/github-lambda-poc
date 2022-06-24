@@ -11,8 +11,6 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-        name: aws-cli-amplify
-        command: |
           set -e
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
           npx create-react-app amplify-app
