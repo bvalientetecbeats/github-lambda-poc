@@ -9,6 +9,8 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run: aws amplify list-apps
+        node -v
+        npm -v
 workflows:
   aws-cli:
     jobs:
