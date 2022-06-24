@@ -8,7 +8,7 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile-name: default
-      - run: amplify list-apps
+      - run: aws amplify list-apps
 workflows:
   aws-cli:
     jobs:
