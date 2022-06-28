@@ -61,5 +61,6 @@ workflows:
       - build:
           context: aws-credentials-context-dev
       - infrastructure-amplify:
-          requires: build
+          requires: 
+              - build
           context: aws-credentials-context-dev
