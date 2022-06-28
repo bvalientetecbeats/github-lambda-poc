@@ -68,7 +68,7 @@ jobs:
       - run: |
           set -e
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
-          yes "" | amplify add hosting
+          amplify add hosting --headless
           amplify publish
       - persist_to_workspace:
           root: .
