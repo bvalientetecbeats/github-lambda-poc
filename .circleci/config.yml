@@ -58,5 +58,8 @@ jobs:
 workflows:
   aws-cli:
     jobs:
+      - build:
+          context: aws-credentials-context-dev
       - infrastructure-amplify:
+          requires: build
           context: aws-credentials-context-dev
