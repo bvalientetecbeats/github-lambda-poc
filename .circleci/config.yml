@@ -3,12 +3,13 @@ version: '2.1'
 orbs:
   aws-cli: circleci/aws-cli@3.1
 
-jobs:
-
-  build:
-    executor: docker
+executors:
+  build_container:
     docker:
       - image: 'cimg/base:stable'
+
+commands:
+  build:
     steps:
       - checkout
       - node/install:
@@ -34,7 +35,14 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '*' 
+            - '*'
+    
+jobs:
+
+  build-dev:
+    executor: build_container
+    steps:
+      - build
 
   infrastructure-amplify:
     executor: aws-cli/default
@@ -54,7 +62,7 @@ jobs:
 workflows:
   aws-cli:
     jobs:
-      - build:
+      - build-dev:
           context: aws-credentials-context-dev
       - infrastructure-amplify:
           requires: 
