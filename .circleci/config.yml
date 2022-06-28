@@ -6,10 +6,29 @@ orbs:
  
 jobs:
 
+  #Provision AWS Amplify Infrastructure
+  provision:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile-name: default
+      - run: |
+          set -e
+          sudo npm install -g @aws-amplify/cli --unsafe-perm=true
+          amplify init -y
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
+
+  #Build React app
   build:
     docker:
       - image: 'cimg/base:stable'
     steps:
+      - attach_workspace:
+          at: .
       - checkout
       - node/install:
           node-version: '16.15'
@@ -35,8 +54,9 @@ jobs:
           root: .
           paths:
             - '*'
-
-  infrastructure-amplify:
+  
+  #Deploy react app to amplify
+  deploy-amplify:
     executor: aws-cli/default
     steps:
       - attach_workspace:
@@ -47,16 +67,23 @@ jobs:
       - run: |
           set -e
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
-          npx create-react-app amplify-app
-          cd amplify-app
-          amplify init -y 
+          amplify init -y
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
 
 workflows:
   aws-cli:
     jobs:
-      - build:
+      - provision:
           context: aws-credentials-context-dev
-      - infrastructure-amplify:
+      - build:
           requires: 
+              - provision
+          context: aws-credentials-context-dev
+      - deploy-amplify:
+          name: deploy-amplify-dev
+          requires:
               - build
           context: aws-credentials-context-dev
