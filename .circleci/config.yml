@@ -17,6 +17,7 @@ jobs:
           set -e
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
           amplify init -y
+          amplify status
       - persist_to_workspace:
           root: .
           paths:
@@ -67,7 +68,7 @@ jobs:
       - run: |
           set -e
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
-          amplify hosting add
+          yes "" | amplify add hosting
           amplify publish
       - persist_to_workspace:
           root: .
