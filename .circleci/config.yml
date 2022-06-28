@@ -1,8 +1,12 @@
 version: '2.1'
 
+orbs:
+  aws-cli: circleci/aws-cli@3.1
+
 jobs:
 
   build:
+    executor: docker
     docker:
       - image: 'cimg/base:stable'
     steps:
@@ -19,10 +23,7 @@ jobs:
               - v1-dependencies-
       - run:
             name: Npm install
-            command: |
-                set -e
-                node -v
-                npm ci
+            command: npm ci
       - run:
             name: Npm build
             command: npm run build
@@ -34,9 +35,6 @@ jobs:
           root: .
           paths:
             - '*' 
-
-orbs:
-  aws-cli: circleci/aws-cli@3.1  
 
   infrastructure-amplify:
     executor: aws-cli/default
@@ -51,9 +49,7 @@ orbs:
           sudo npm install -g @aws-amplify/cli --unsafe-perm=true
           npx create-react-app amplify-app
           cd amplify-app
-          amplify init -y
-  
- 
+          amplify init -y 
 
 workflows:
   aws-cli:
