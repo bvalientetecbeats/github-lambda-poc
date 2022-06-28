@@ -7,9 +7,11 @@ executors:
   build_container:
     docker:
       - image: 'cimg/base:stable'
+  
+jobs:
 
-commands:
   build:
+    executor: build_container
     steps:
       - checkout
       - node/install:
@@ -36,13 +38,6 @@ commands:
           root: .
           paths:
             - '*'
-    
-jobs:
-
-  build-dev:
-    executor: build_container
-    steps:
-      - build
 
   infrastructure-amplify:
     executor: aws-cli/default
@@ -62,7 +57,7 @@ jobs:
 workflows:
   aws-cli:
     jobs:
-      - build-dev:
+      - build:
           context: aws-credentials-context-dev
       - infrastructure-amplify:
           requires: 
