@@ -1,8 +1,8 @@
 version: '2.1'
 
-#orbs:
-#  aws-cli: circleci/aws-cli@3.1
-
+orbs:
+  aws-cli: circleci/aws-cli@3.1
+  node: circleci/node@5.0.2
  
 jobs:
 
@@ -55,4 +55,8 @@ workflows:
   aws-cli:
     jobs:
       - build:
+          context: aws-credentials-context-dev
+      - infrastructure-amplify:
+          requires: 
+              - build
           context: aws-credentials-context-dev
