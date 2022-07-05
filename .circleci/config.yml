@@ -94,7 +94,7 @@ workflows:
           context: 
             - amplify-dev
             - aws-credentials-context-dev
-      - provision:
+      - provision-amplify:
           requires:
             - save-artifact
           context: 
@@ -103,7 +103,7 @@ workflows:
       - deploy-amplify:
           name: deploy-amplify-dev
           requires:
-              - provision
+              - provision-amplify
           context: 
             - amplify-dev
             - aws-credentials-context-dev
