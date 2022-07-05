@@ -89,7 +89,7 @@ jobs:
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/artifact.zip
 
 workflows:
-  aws-cli:
+  amplify-app:
     jobs:
       - build-app:
           context: 
