@@ -37,6 +37,31 @@ jobs:
           paths:
             - '*'
 
+  #Unit Test React app
+  unit-test:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - attach_workspace:
+          at: .
+      - node/install:
+          node-version: '16.15'
+      - run:
+            name: Node version
+            command: node --version
+      - restore_cache:
+            keys:
+              - v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+              #Fallback on empty cache
+              - v1-dependencies-
+      - run:
+            name: Run test
+            command: npm run test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
+
   #Save artifact to S3 bucket
   save-artifact:
     executor: aws-cli/default
@@ -95,9 +120,15 @@ workflows:
           context: 
             - amplify-dev
             - aws-credentials-context-dev
-      - save-artifact:
+      - unit-test:
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
           requires:
             - build-app
+      - save-artifact:
+          requires:
+            - unit-test
           context: 
             - amplify-dev
             - aws-credentials-context-dev
