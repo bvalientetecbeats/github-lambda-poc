@@ -159,7 +159,7 @@ workflows:
       - deploy-amplify:
           name: deploy-amplify-prod
           requires:
-              - deploy-amplify-qa
+              - approve-deploy-prod
           context: 
             - amplify-dev
             - aws-credentials-context-dev
