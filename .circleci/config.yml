@@ -45,7 +45,7 @@ jobs:
               set -e
               cd ./build
               zip -r ../artifact.zip .
-              aws s3 cp ../artifact.zip s3://amplify-poc-artifacts-dev/$PROJECT_NAME/
+              aws s3 cp ../artifact.zip s3://amplify-poc-artifacts-dev/$CIRCLE_PROJECT_REPONAME/
       - save_cache:
           key: v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
           paths:
@@ -64,8 +64,8 @@ jobs:
               set -e
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
               echo $APPID
-              aws amplify create-branch --app-id $APPID --branch-name $BRANCH_NAME
-              aws amplify start-deployment --app-id $APPID --branch-name $BRANCH_NAME --source-url s3://amplify-artifacts-dev/$PROJECT_NAME/archive.zip
+              aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
+              aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://amplify-artifacts-dev/$CIRCLE_PROJECT_REPONAME/archive.zip
 
 workflows:
   aws-cli:
