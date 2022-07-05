@@ -64,6 +64,13 @@ jobs:
       - run:
             name: Provision Amplify FrontEnd Infrastructure
             command: aws amplify create-app --name $ENV_NAME --platform 'WEB'
+      - run:
+            name: Create Amplify Branch
+            command: |
+              set -e
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
+              echo $APPID
+              aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
 
   #Deploy react app to amplify
   deploy-amplify:
@@ -73,13 +80,11 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Deploy artifact
+            name: Deploy React App
             command: |
               set -e
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
               echo $APPID
-              aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
-              sleep 10
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://S3_BUCKET/$CIRCLE_PROJECT_REPONAME/archive.zip
 
 workflows:
