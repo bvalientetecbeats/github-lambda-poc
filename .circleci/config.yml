@@ -13,23 +13,15 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile-name: default
-      - run: |
-          set -e
-          sudo npm install -g @aws-amplify/cli --unsafe-perm=true
-          amplify init -y
-          amplify status
-      - persist_to_workspace:
-          root: .
-          paths:
-            - '*'
+      - run:
+            name: Provision Amplify Infrastructure
+            command: aws amplify create-app --name $ENV_NAME --platform 'WEB'
 
   #Build React app
   build:
     docker:
       - image: 'cimg/base:stable'
     steps:
-      - attach_workspace:
-          at: .
       - checkout
       - node/install:
           node-version: '16.15'
@@ -47,44 +39,51 @@ jobs:
       - run:
             name: Npm build
             command: npm run build
+      - run: 
+            name: Save artifact to S3
+            command: |
+              set -e
+              cd ./build
+              zip -r ../artifact.zip .
+              aws s3 cp ../artifact.zip s3://amplify-poc-artifacts-dev/$PROJECT_NAME/
       - save_cache:
           key: v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - node_modules
-      - persist_to_workspace:
-          root: .
-          paths:
-            - '*'
   
   #Deploy react app to amplify
   deploy-amplify:
     executor: aws-cli/default
     steps:
-      - attach_workspace:
-          at: .
       - checkout
       - aws-cli/setup:
           profile-name: default
-      - run: |
-          set -e
-          sudo npm install -g @aws-amplify/cli --unsafe-perm=true
-          amplify publish
-      - persist_to_workspace:
-          root: .
-          paths:
-            - '*'
+      - run:
+            name: Deploy artifact
+            command: |
+              set -e
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
+              echo $APPID
+              aws amplify create-branch --app-id $APPID --branch-name $BRANCH_NAME
+              aws amplify start-deployment --app-id $APPID --branch-name $BRANCH_NAME --source-url s3://amplify-artifacts-dev/$PROJECT_NAME/archive.zip
 
 workflows:
   aws-cli:
     jobs:
       - provision:
-          context: aws-credentials-context-dev
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
       - build:
           requires: 
               - provision
-          context: aws-credentials-context-dev
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
       - deploy-amplify:
           name: deploy-amplify-dev
           requires:
               - build
-          context: aws-credentials-context-dev
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
