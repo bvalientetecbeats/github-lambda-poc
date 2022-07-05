@@ -85,6 +85,7 @@ jobs:
               set -e
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
               echo $APPID
+              aws s3 ls s3://S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://S3_BUCKET/$CIRCLE_PROJECT_REPONAME/archive.zip
 
 workflows:
