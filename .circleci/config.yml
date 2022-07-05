@@ -120,15 +120,15 @@ workflows:
           context: 
             - amplify-dev
             - aws-credentials-context-dev
-      - unit-test:
-          context: 
-            - amplify-dev
-            - aws-credentials-context-dev
-          requires:
-            - build-app
+      #- unit-test:
+      #    context: 
+      #      - amplify-dev
+      #      - aws-credentials-context-dev
+      #    requires:
+      #      - build-app
       - save-artifact:
           requires:
-            - unit-test
+            - build-app
           context: 
             - amplify-dev
             - aws-credentials-context-dev
@@ -142,6 +142,24 @@ workflows:
           name: deploy-amplify-dev
           requires:
               - provision-amplify
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
+      - deploy-amplify:
+          name: deploy-amplify-qa
+          requires:
+              - deploy-amplify-dev
+          context: 
+            - amplify-dev
+            - aws-credentials-context-dev
+      - approve-deploy-prod:
+          type: approval
+          requires:
+              - deploy-amplify-qa
+      - deploy-amplify:
+          name: deploy-amplify-prod
+          requires:
+              - deploy-amplify-qa
           context: 
             - amplify-dev
             - aws-credentials-context-dev
