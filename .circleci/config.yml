@@ -6,7 +6,7 @@ orbs:
  
 jobs:
 
-  #Provision AWS Amplify Infrastructure
+  #Provision AWS Amplify FrontEnd Infrastructure
   provision:
     executor: aws-cli/default
     steps:
@@ -14,7 +14,7 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Provision Amplify Infrastructure
+            name: Provision Amplify FrontEnd Infrastructure
             command: aws amplify create-app --name $ENV_NAME --platform 'WEB'
 
   #Build React app
@@ -39,6 +39,24 @@ jobs:
       - run:
             name: Npm build
             command: npm run build
+      - save_cache:
+          key: v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
+
+  #Deploy react app to amplify
+  deploy-amplify:
+    executor: aws-cli/default
+    steps:
+      - attach_workspace:
+          at: .
+      - checkout
+      - aws-cli/setup:
+          profile-name: default
       - run: 
             name: Save artifact to S3
             command: |
@@ -46,18 +64,6 @@ jobs:
               cd ./build
               zip -r ../artifact.zip .
               aws s3 cp ../artifact.zip s3://amplify-poc-artifacts-dev/$CIRCLE_PROJECT_REPONAME/
-      - save_cache:
-          key: v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
-          paths:
-            - node_modules
-  
-  #Deploy react app to amplify
-  deploy-amplify:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup:
-          profile-name: default
       - run:
             name: Deploy artifact
             command: |
