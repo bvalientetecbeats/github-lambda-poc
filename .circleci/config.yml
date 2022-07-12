@@ -58,10 +58,6 @@ jobs:
             name: Run test
             #command: npm run test
             command: npm run test
-      - persist_to_workspace:
-          root: .
-          paths:
-            - '*'
 
   #Save artifact to S3 bucket
   save-artifact:
@@ -77,7 +73,7 @@ jobs:
               set -e
               cd ./build && zip -r ../artifact.zip .
       - run:
-            name: Save url artifact
+            name: Save artifact url
             command: echo https://output.circle-artifacts.com/output/job/$CIRCLE_WORKFLOW_JOB_ID/artifacts/0/artifact.zip > url_artifact.build           
       - store_artifacts:
           path: ./artifact.zip
@@ -86,7 +82,6 @@ jobs:
           root: .
           paths:
             - '*'
-
 
   #Provision AWS Amplify FrontEnd Infrastructure
   provision-amplify:
@@ -104,6 +99,13 @@ jobs:
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
+      - run:
+            name: Persist build number
+            command: echo $CIRCLE_BUILD_NUM > provision_num.build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
 
   #Deploy react app to amplify
   deploy-amplify:
@@ -118,8 +120,9 @@ jobs:
             command: |
               set -e
               URL_ARTIFACT=$(cat url_artifact.build)
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
-              echo $APPID && echo $URL_ARTIFACT          
+              PROVISION_NUM=$(cat provision_num.build)
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$PROVISION_NUM\") | .appId" | sed 's/\"//g')
+              echo $APPID && echo $URL_ARTIFACT
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url $URL_ARTIFACT
 
 workflows:
