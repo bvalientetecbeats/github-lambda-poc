@@ -106,15 +106,10 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Getting artifact
-            command: |
-              set -e
-              sudo apt-get install -y wget
-              wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifact.zip
-      - run:
             name: Get artifacts
             command: |
-              artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts" \
+              ARTIFACT==$((CIRCLE_BUILD_NUM - 2))
+              artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$ARTIFACT/artifacts" \
               -H "Accept: application/json" \
               -u "$CIRCLE_API_TOKEN:")
               # generate a heredoc in BASH_ENV
