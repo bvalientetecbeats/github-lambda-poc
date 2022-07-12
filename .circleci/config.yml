@@ -89,7 +89,7 @@ jobs:
           profile-name: default
       - run:
             name: Provision Amplify FrontEnd Infrastructure
-            command: aws amplify create-app --name $CIRCLE_PROJECT_REPONAME --platform 'WEB'
+            command: aws amplify create-app --name $CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM --platform 'WEB'
       - run:
             name: Create Amplify Branch
             command: |
