@@ -78,7 +78,7 @@ jobs:
               cd ./build && zip -r ../artifact.zip .
               #aws s3 cp ../artifact.zip s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
       - store_artifacts:
-          path: /
+          path: ./artifact.zip
           destination: artifact.zip
 
 
