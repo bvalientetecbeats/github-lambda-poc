@@ -110,8 +110,8 @@ jobs:
             name: Deploy React App
             command: |
               set -e
-              apt-get install -y wget
-              wget https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/artifact.zip
+              sudo apt-get install -y wget
+              wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/artifact.zip
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws s3 ls s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
