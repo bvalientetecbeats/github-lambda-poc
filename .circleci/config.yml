@@ -69,16 +69,18 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - checkout
       - aws-cli/setup:
           profile-name: default
       - run: 
             name: Save artifact to S3
             command: |
               set -e
-              cd ./build
-              zip -r ../artifact.zip .
-              aws s3 cp ../artifact.zip s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
+              cd ./build && zip -r ../artifact.zip .
+              #aws s3 cp ../artifact.zip s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
+      - store_artifacts:
+          path: /
+          destination: artifact.zip
+
 
   #Provision AWS Amplify FrontEnd Infrastructure
   provision-amplify:
