@@ -85,17 +85,16 @@ jobs:
   provision-amplify:
     executor: aws-cli/default
     steps:
-      - checkout
       - aws-cli/setup:
           profile-name: default
       - run:
             name: Provision Amplify FrontEnd Infrastructure
-            command: aws amplify create-app --name $ENV_NAME --platform 'WEB'
+            command: aws amplify create-app --name $CIRCLE_PROJECT_REPONAME --platform 'WEB'
       - run:
             name: Create Amplify Branch
             command: |
               set -e
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
 
@@ -103,7 +102,6 @@ jobs:
   deploy-amplify:
     executor: aws-cli/default
     steps:
-      - checkout
       - aws-cli/setup:
           profile-name: default
       - run:
@@ -111,8 +109,8 @@ jobs:
             command: |
               set -e
               sudo apt-get install -y wget
-              wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/artifact.zip
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
+              wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/0/artifact.zip
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws s3 ls s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/artifact.zip
