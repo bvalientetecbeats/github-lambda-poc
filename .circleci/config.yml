@@ -122,6 +122,7 @@ jobs:
               echo "read -r -d '' STORED_ARTIFACTS \<< 'EOF_ARTIFACTS'" >> $BASH_ENV
               echo "$artifacts" >> $BASH_ENV
               echo "EOF_ARTIFACTS" >> $BASH_ENV
+              ls -lah && pwd
       - run:
             name: Deploy React App
             command: |
