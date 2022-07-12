@@ -71,6 +71,9 @@ jobs:
           at: .
       - aws-cli/setup:
           profile-name: default
+      - run:
+            name: Job number
+            command: echo $CIRCLE_BUILD_NUM > job_artifact.build
       - run: 
             name: Save artifact to CircleCI
             command: |
@@ -79,6 +82,10 @@ jobs:
       - store_artifacts:
           path: ./artifact.zip
           destination: artifact.zip
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*'
 
 
   #Provision AWS Amplify FrontEnd Infrastructure
@@ -103,12 +110,14 @@ jobs:
   deploy-amplify:
     executor: aws-cli/default
     steps:
+      - attach_workspace:
+          at: .
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Get artifacts
+            name: Get artifact
             command: |
-              ARTIFACT==$((CIRCLE_BUILD_NUM - 2))
+              ARTIFACT=$(cat job_artifact.build)
               artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$ARTIFACT/artifacts" \
               -H "Accept: application/json" \
               -u "$CIRCLE_API_TOKEN:")
