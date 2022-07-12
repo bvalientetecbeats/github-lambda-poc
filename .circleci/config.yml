@@ -72,11 +72,10 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run: 
-            name: Save artifact to S3
+            name: Save artifact to CircleCI
             command: |
               set -e
               cd ./build && zip -r ../artifact.zip .
-              #aws s3 cp ../artifact.zip s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
       - store_artifacts:
           path: ./artifact.zip
           destination: artifact.zip
@@ -111,6 +110,8 @@ jobs:
             name: Deploy React App
             command: |
               set -e
+              apt-get install -y wget
+              wget https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/artifact.zip
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$ENV_NAME\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws s3 ls s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
