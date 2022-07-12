@@ -70,15 +70,15 @@ jobs:
       - attach_workspace:
           at: .
       - aws-cli/setup:
-          profile-name: default
-      - run:
-            name: Job number
-            command: echo $CIRCLE_BUILD_NUM > job_artifact.build
+          profile-name: default            
       - run: 
             name: Save artifact to CircleCI
             command: |
               set -e
               cd ./build && zip -r ../artifact.zip .
+      - run:
+            name: Save url artifact
+            command: echo https://output.circle-artifacts.com/output/job/$CIRCLE_WORKFLOW_JOB_ID/artifacts/0/artifact.zip > url_artifact.build           
       - store_artifacts:
           path: ./artifact.zip
           destination: artifact.zip
@@ -101,7 +101,6 @@ jobs:
             name: Create Amplify Branch
             command: |
               set -e
-              #export AMPLIFY_NAME=\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM"
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
@@ -115,26 +114,13 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Get artifact
-            command: |
-              ARTIFACT=$(cat job_artifact.build)
-              artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$ARTIFACT/artifacts" \
-              -H "Accept: application/json" \
-              -u "$CIRCLE_API_TOKEN:")
-              # generate a heredoc in BASH_ENV
-              # the '\<<' is a CircleCI escape
-              echo "read -r -d '' STORED_ARTIFACTS \<< 'EOF_ARTIFACTS'" >> $BASH_ENV
-              echo "$artifacts" >> $BASH_ENV
-              echo "EOF_ARTIFACTS" >> $BASH_ENV
-              echo $artifacts
-              ls -lah && pwd
-      - run:
             name: Deploy React App
             command: |
               set -e
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME\") | .appId" | sed 's/\"//g')
-              echo $APPID
-              aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/artifact.zip
+              URL_ARTIFACT=$(cat url_artifact.build)
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
+              echo $APPID && echo $URL_ARTIFACT          
+              aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url $URL_ARTIFACT
 
 workflows:
   amplify-app:
