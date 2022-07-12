@@ -112,7 +112,6 @@ jobs:
       #        wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/0/artifact.zip
       - run:
             name: Get artifacts
-            when: on_fail
             command: |
               artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts" \
               -H "Accept: application/json" \
