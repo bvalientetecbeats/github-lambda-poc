@@ -104,15 +104,30 @@ jobs:
     steps:
       - aws-cli/setup:
           profile-name: default
+      #- run:
+      #      name: Getting artifact
+      #      command: |
+      #        set -e
+      #        sudo apt-get install -y wget
+      #        wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/0/artifact.zip
+      - run:
+            name: Get artifacts
+            when: on_fail
+            command: |
+              artifacts=$(curl -X GET "https://circleci.com/api/v2/project/github/bvalientetecbeats/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts" \
+              -H "Accept: application/json" \
+              -u "$CIRCLE_API_TOKEN:")
+              # generate a heredoc in BASH_ENV
+              # the '\<<' is a CircleCI escape
+              echo "read -r -d '' STORED_ARTIFACTS \<< 'EOF_ARTIFACTS'" >> $BASH_ENV
+              echo "$artifacts" >> $BASH_ENV
+              echo "EOF_ARTIFACTS" >> $BASH_ENV
       - run:
             name: Deploy React App
             command: |
               set -e
-              sudo apt-get install -y wget
-              wget https://circleci.com/api/v2/project/github/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts/0/artifact.zip
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME\") | .appId" | sed 's/\"//g')
               echo $APPID
-              aws s3 ls s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url s3://$S3_BUCKET/$CIRCLE_PROJECT_REPONAME/artifact.zip
 
 workflows:
