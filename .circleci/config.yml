@@ -56,7 +56,6 @@ jobs:
               - v1-dependencies-
       - run:
             name: Run test
-            #command: npm run test
             command: npm run test
 
   #Save artifact to S3 bucket
@@ -90,18 +89,19 @@ jobs:
       - aws-cli/setup:
           profile-name: default
       - run:
-            name: Provision Amplify FrontEnd Infrastructure
+            #This section will create the Amplify application. To rename the app change the --name variable
+            name: Provision Amplify FrontEnd Infrastructure            
             command: aws amplify create-app --name $CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM --platform 'WEB'
       - run:
             name: Create Amplify Branch
             command: |
               set -e
               APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
-              echo $APPID
+              echo $APPID > app_id.build
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
       - run:
-            name: Persist build number
-            command: echo $CIRCLE_BUILD_NUM > provision_num.build
+            name: Persist app id
+            command: echo $APPID
       - persist_to_workspace:
           root: .
           paths:
@@ -120,9 +120,8 @@ jobs:
             command: |
               set -e
               URL_ARTIFACT=$(cat url_artifact.build)
-              PROVISION_NUM=$(cat provision_num.build)
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$PROVISION_NUM\") | .appId" | sed 's/\"//g')
-              echo $APPID && echo $URL_ARTIFACT
+              APPID=$(cat app_id.build)
+              echo $APPID
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url $URL_ARTIFACT
 
 workflows:
