@@ -95,13 +95,9 @@ jobs:
       - run:
             name: Create Amplify Branch
             command: |
-              set -e
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
-              echo $APPID > app_id.build
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')                            
+              echo $APPID > app_id.build #Persists app id to deploy
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
-      - run:
-            name: Persist app id
-            command: echo $APPID
       - persist_to_workspace:
           root: .
           paths:
@@ -118,10 +114,8 @@ jobs:
       - run:
             name: Deploy React App
             command: |
-              set -e
               URL_ARTIFACT=$(cat url_artifact.build)
               APPID=$(cat app_id.build)
-              echo $APPID
               aws amplify start-deployment --app-id $APPID --branch-name $CIRCLE_BRANCH --source-url $URL_ARTIFACT
 
 workflows:
