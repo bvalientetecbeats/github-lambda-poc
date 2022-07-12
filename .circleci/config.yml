@@ -94,7 +94,8 @@ jobs:
             name: Create Amplify Branch
             command: |
               set -e
-              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\""$CIRCLE_PROJECT_REPONAME\"-"\"$CIRCLE_BUILD_NUM\""") | .appId" | sed 's/\"//g')
+              #export AMPLIFY_NAME=\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM"
+              APPID=$(aws amplify list-apps | jq ".apps[] | select(.name ==\"$CIRCLE_PROJECT_REPONAME-$CIRCLE_BUILD_NUM\") | .appId" | sed 's/\"//g')
               echo $APPID
               aws amplify create-branch --app-id $APPID --branch-name $CIRCLE_BRANCH
 
