@@ -53,6 +53,17 @@ workflows:
                           only: 
                             - master
                             - orb-lambda-python
+            - deploy:
+                  name: deploy-qa
+                  context:
+                      - aws-credentials-context-qa
+                  requires:
+                      - build
+                  filters:
+                      branches:
+                          only: 
+                            - master
+                            - orb-lambda-python
             - approve-deploy-prod:
                   type: approval
                   requires:
