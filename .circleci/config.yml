@@ -42,6 +42,7 @@ jobs:
             - attach_workspace:
                   at: .
             - sam/install
+            - run: echo $SAM_S3_BUCKET
             - sam/deploy:
                   stack-name: $CIRCLE_PROJECT_REPONAME
                   s3-bucket: $SAM_S3_BUCKET
@@ -65,7 +66,7 @@ workflows:
                             - orb-lambda-python
             - deploy:
                   name: deploy-dev
-                  context:
+                  context:                      
                       - aws-credentials-context-dev
                   requires:
                       - unit-test
