@@ -52,10 +52,10 @@ workflows:
             - build:
                   context:
                       - build
-                      - aws-dev
+                      - aws-credentials-context-dev
             - unit-test:
                   context:
-                      - aws-dev
+                      - aws-credentials-context-dev
                   requires:
                       - build
                   filters:
@@ -66,7 +66,7 @@ workflows:
             - deploy:
                   name: deploy-dev
                   context:
-                      - aws-dev
+                      - aws-credentials-context-dev
                   requires:
                       - unit-test
                   filters:
@@ -75,7 +75,7 @@ workflows:
                             - master
                             - orb-lambda-python
             - deploy:
-                  name: deploy-qa
+                  name: aws-credentials-context-qa
                   context:
                       - aws-qa
                   requires:
