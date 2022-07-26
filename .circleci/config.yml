@@ -2,7 +2,8 @@ version: 2.1
 
 #CircleCI Orbs to use in this pipeline
 orbs:
-    sam: circleci/aws-sam-serverless@3
+    sam: circleci/aws-sam-serverless@3.0
+    #python@1.0.0 version supports pipenv
     python: circleci/python@1.0.0
 
 jobs:
@@ -20,16 +21,21 @@ jobs:
                   paths:
                       - .
 
+    #Run the unit test
     unit-test:
         executor: python/default
         steps:
             - checkout
+            #pip pytest package installation
             - python/install-packages:
                 args: pytest
                 pkg-manager: pipenv
+            #Additional pip packages installation
             - run: pip install -r tests/requirements.txt --user
+            #Run unit test under ./tests/ directory
             - run: python3 -m pytest tests/unit -v
 
+    #Deployment with AWS SAM
     deploy:
         executor: sam/default
         steps:
@@ -46,11 +52,10 @@ workflows:
             - build:
                   context:
                       - build
-                      - aws-credentials-context-dev
+                      - aws-dev
             - unit-test:
                   context:
-                      - build
-                      - aws-credentials-context-dev
+                      - aws-dev
                   requires:
                       - build
                   filters:
@@ -61,7 +66,7 @@ workflows:
             - deploy:
                   name: deploy-dev
                   context:
-                      - aws-credentials-context-dev
+                      - aws-dev
                   requires:
                       - unit-test
                   filters:
@@ -72,7 +77,7 @@ workflows:
             - deploy:
                   name: deploy-qa
                   context:
-                      - aws-credentials-context-qa
+                      - aws-qa
                   requires:
                       - deploy-dev
                   filters:
