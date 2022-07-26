@@ -22,7 +22,7 @@ jobs:
         executor: python/default
         steps:
             - checkout
-            - python/dist
+            - python/default
             - run: ls -lah && pwd
             - run: python3 -m pytest tests/unit -v
 
