@@ -22,7 +22,7 @@ jobs:
         executor: python/default
         steps:
             - checkout
-            - python/default
+            - python/dist
             - run: pip install -r tests/requirements.txt --user
             - run: python3 -m pytest tests/unit -v
 
