@@ -75,11 +75,11 @@ workflows:
                             - master
                             - orb-lambda-python
             - deploy:
-                  name: aws-credentials-context-qa
+                  name: deploy-qa
                   context:
                       - aws-qa
                   requires:
-                      - deploy-dev
+                      - aws-credentials-context-qa
                   filters:
                       branches:
                           only: 
