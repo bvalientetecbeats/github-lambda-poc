@@ -22,7 +22,7 @@ jobs:
         executor: python/default
         steps:
             - checkout
-            - python/dist
+            - python/test
             - run: pip install -r tests/requirements.txt --user
             - run: python3 -m pytest tests/unit -v
 
@@ -54,6 +54,8 @@ workflows:
                           only: 
                             - master
                             - orb-lambda-python
+                  pkg-manager: pipenv
+                  test-tool: pytest
             - deploy:
                   name: deploy-dev
                   context:
