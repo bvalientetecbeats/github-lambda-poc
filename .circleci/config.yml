@@ -77,9 +77,9 @@ workflows:
             - deploy:
                   name: deploy-qa
                   context:
-                      - aws-qa
-                  requires:
                       - aws-credentials-context-test
+                  requires:
+                      - deploy-dev
                   filters:
                       branches:
                           only: 
