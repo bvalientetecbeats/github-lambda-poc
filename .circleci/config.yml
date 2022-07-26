@@ -23,6 +23,7 @@ jobs:
         steps:
             - checkout
             - python/dist
+            - run: ls -lah && pwd
             - run: python3 -m pytest tests/unit -v
 
     deploy:
