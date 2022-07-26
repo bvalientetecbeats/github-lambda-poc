@@ -2,7 +2,7 @@ version: 2.1
 
 #CircleCI Orbs to use in this pipeline
 orbs:
-    sam: circleci/aws-sam-serverless@3.0
+    sam: circleci/aws-sam-serverless@3.2.0
     #python@1.0.0 version supports pipenv
     python: circleci/python@1.0.0
 
@@ -45,6 +45,7 @@ jobs:
             - run: echo $SAM_S3_BUCKET
             - sam/deploy:
                   stack-name: $CIRCLE_PROJECT_REPONAME
+                  s3-bucket: $SAM_S3_BUCKET
 
 workflows:
     lambda-python:
@@ -67,7 +68,6 @@ workflows:
                   name: deploy-dev
                   context:                      
                       - aws-credentials-context-dev
-                  s3-bucket: $SAM_S3_BUCKET
                   requires:
                       - unit-test
                   filters:
