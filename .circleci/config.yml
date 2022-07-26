@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
     sam: circleci/aws-sam-serverless@3
-    python: circleci/python@2.0.3
+    python: circleci/python@1.0.0
 
 jobs:
     build:
@@ -22,9 +22,11 @@ jobs:
         executor: python/default
         steps:
             - checkout
-            - python/dist
-            - run: pip install -r tests/requirements.txt --user
-            - run: python3 -m pytest tests/unit -v
+            - python/install-packages:
+                args: pytest
+                pkg-manager: pipenv
+            #- run: pip install -r tests/requirements.txt --user
+            #- run: python3 -m pytest tests/unit -v
 
     deploy:
         executor: sam/default
