@@ -45,7 +45,7 @@ jobs:
             - run: echo $SAM_S3_BUCKET
             - sam/deploy:
                   stack-name: $CIRCLE_PROJECT_REPONAME
-                  s3-bucket: $SAM_S3_BUCKET
+                  s3-bucket: ${SAM_S3_BUCKET}
 
 workflows:
     lambda-python:
