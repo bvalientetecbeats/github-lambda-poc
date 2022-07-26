@@ -23,7 +23,7 @@ jobs:
         steps:
             - checkout
             - python/default
-            - run: ls -lah && pwd
+            - run: pip install -r tests/requirements.txt --user
             - run: python3 -m pytest tests/unit -v
 
     deploy:
