@@ -16,7 +16,7 @@ jobs:
             - persist_to_workspace:
                   root: .
                   paths:
-                      - .aws-sam
+                      - .
 
     unit-test:
         executor: python/default
@@ -42,12 +42,23 @@ workflows:
                   context:
                       - build
                       - aws-credentials-context-dev
+            - unit-test:
+                  context:
+                      - build
+                      - aws-credentials-context-dev
+                  requires:
+                      - build
+                  filters:
+                      branches:
+                          only: 
+                            - master
+                            - orb-lambda-python
             - deploy:
                   name: deploy-dev
                   context:
                       - aws-credentials-context-dev
                   requires:
-                      - build
+                      - unit-test
                   filters:
                       branches:
                           only: 
@@ -58,7 +69,7 @@ workflows:
                   context:
                       - aws-credentials-context-qa
                   requires:
-                      - build
+                      - deploy-dev
                   filters:
                       branches:
                           only: 
