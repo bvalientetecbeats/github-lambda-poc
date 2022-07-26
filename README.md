@@ -1,6 +1,8 @@
-# python-app-dev
+# Python lambda deployment with AWS SAM and CircleCI
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+This project contains source code and supporting files for a serverless application that you can be deployed with the SAM and that is automated with CircleCI. 
+
+This project includes the following files and folders:
 
 - hello_world - Code for the application's Lambda function.
 - events - Invocation events that you can use to invoke the function.
@@ -23,6 +25,23 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 * [DataGrip](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
 * [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
 * [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
+
+## CircleCI pipeline
+
+The `.circleci/config.yml` file runs two orbs: 1) to build and deploy a python code to AWS Lambda utilizing the AWS SAM; 2) to run the unit-test with pytest and pipenv as package manager.
+The CircleCI project uses contexts `build`, `aws-dev`, `aws-qa`, and `aws-prod`
+
+* [circleci/aws-sam-serverless@3.2.0] ( https://circleci.com/developer/orbs/orb/circleci/aws-sam-serverless )
+* [circleci/python@2.0.3] ( https://circleci.com/developer/orbs/orb/circleci/python )
+* [AWS SAM documentation] ( https://aws.amazon.com/serverless/sam/ )
+
+The pipeline name is `lambda-python` and the jobs included in the pipeline are:
+- build
+- unit-test
+- deploy-dev
+- deploy-qa
+- approve-deploy-prod
+- deploy-prod
 
 ## Deploy the sample application
 
